@@ -1,0 +1,226 @@
+.home-content {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #eaeaea;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 80px; /* Account for fixed header */
+    gap: var(--spacing-md);
+}
+
+.home-banner {
+    position: relative;
+    width: 100%;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.home-banner > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 1;
+}
+
+.banner-content {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    text-align: center;
+    width: 100%;
+}
+
+.banner-content h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.banner-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.banner-content .btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 2rem;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s;
+}
+.banner-content .btn:hover {
+    background: #0056b3;
+}
+
+.search-fields {
+    background: #ffb030;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+
+}
+
+.search-fields select, .search-fields button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ddd; 
+    outline: none;
+    transition: border 0.2s;
+    min-width: 180px;
+}
+.search-fields select:focus, .search-fields button:focus {
+    border: 1px solid #007bff;
+}
+
+.fields-area{
+    border-radius: 1rem;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem auto 0 auto;
+    text-align: center;
+    background: #fff;
+    padding: 2rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 1.2rem;
+}
+
+.field-cards {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+   
+    
+    
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 2rem 0;
+}
+
+.card-container {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 2rem 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+}
+.card-container:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #222;
+}
+
+.card-content {
+    color: #555;
+    font-size: 1rem;
+}
+
+.home-about {
+    background: #fff;
+    border-radius: 2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 2.5rem 2rem;
+    margin: 2rem auto;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.about-image {
+    width: 320px;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.about-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.about-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.about-description {
+    font-size: 1.15rem;
+    color: #444;
+    line-height: 1.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .field-cards {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    .home-banner {
+        min-height: 40vh;
+    }
+    .search-fields {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    .search-fields select, .search-fields button {
+        width: 100%;
+        min-width: 0;
+    }
+    .home-about {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem 1rem;
+    }
+    .about-image {
+        width: 100%;
+        height: 220px;
+        margin-bottom: 1.5rem;
+    }
+}
+@media (max-width: 600px) {
+    .home-banner {
+        min-height: 30vh;
+    }
+    .banner-content h1 {
+        font-size: 1.5rem;
+    }
+}
+
+
