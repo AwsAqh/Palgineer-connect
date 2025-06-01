@@ -1,0 +1,154 @@
+.dashboard-page-container{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.dashboard-page-content{
+    padding-top: 4.5rem;
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+}
+
+
+.dash-side-nav-bar{
+    background-color: #cdcdcd;
+    width: 13%;
+    
+    min-height: 100%;
+}
+
+.dash-user-info{
+    background-color: #666464;
+    height: 100%;
+    width: 100%;
+}
+
+
+.dash-user-info-avatar{
+    
+   display: flex;
+   justify-content: center;
+   align-items: center;
+    height: 100%;
+    width: 40%;
+}
+.dash-user-info-avatar>div{
+    width: 50%;
+    height: 50%;
+    background-color: #424141;  
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.dash-main-content{
+    background-color: #ffffff;
+    width: 90%;
+    height: 100%;
+}
+
+.basic-info{
+    background-color: #b0adad;
+    height: 40vh;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.basic-info-form-area{
+width: 60%;
+
+height: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: space-around;
+}
+
+.basic-info-form-area-row{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 70%;
+    gap: 20px;
+}
+
+.technical-info{
+    background-color: #d5d5d5;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.summary-input-area{
+    background-color: #570101;
+    height: 20%;
+    width: 80%;
+}
+
+.summary-input-area>input{
+    background-color: #570101;
+    border: none;
+    outline: none;
+    width: 100%;
+    height: 100%;
+}
+
+.tech-stack-area{
+    background-color: #570101;
+   
+    width: 80%;
+    display: flex;
+    
+    align-items: center;
+    justify-content: space-around;
+}
+
+.skill{
+    background-color: #ffffff;
+    height: 20%;
+    width: 20%;
+}
+
+.resume-area{
+    background-color: #ffffff;
+    height: 50vh;
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    border: 2px dashed #000000;
+}
+
+.resume-area label{
+    background-color: #ffffff;
+}
+
+.resume-area input{
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
