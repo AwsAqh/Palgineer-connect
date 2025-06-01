@@ -1,0 +1,423 @@
+.register-page-container {
+    display: flex;
+  
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
+    padding-top: 2rem;
+}
+
+.register-banner{
+    width: 100%; 
+    height: 100%;
+}
+
+.register-banner img{
+    width: 100%;
+   
+    object-fit: fill;
+}
+
+.register-container {
+    display: flex;
+    width: 50%;
+    align-items: stretch;
+    justify-content: center;
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    margin: 2rem auto;
+    gap: 0;
+    min-height: unset;
+    padding: 1.5rem;
+}
+
+.register-flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 3rem;
+    width: 100%;
+    max-width: 1100px;
+    margin: 2rem auto;
+    min-height: 100vh;
+}
+
+.register-content {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: auto;
+    min-height: 708px;
+}
+
+.register-header-col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 300px;
+    max-width: 400px;
+    margin-top: 2rem;
+    margin-left: 2rem;
+    text-align: center;
+}
+
+.register-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 1.2rem;
+    text-align: center;
+    white-space: normal;
+}
+
+.register-description {
+    font-size: 1.1rem;
+    color: #444;
+    text-align: center;
+    max-width: 400px;
+    margin: 0;
+}
+
+.register-form {
+    padding-top: 2rem;
+    height: 100%;   
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px;
+    min-width: 350px;
+    padding: 2.5rem 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin: 0 auto;
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.form-group label {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.register-form input,
+.register-form select {
+    background-color: #f0f0f0;
+    color: #333;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ddd;
+    outline: none;
+    margin-bottom: 0.5rem;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.register-btn:hover {
+    background-color: #0056b3;
+}
+
+
+.user-about-cv-img{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.user-about-cv-img h2{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #222;
+    margin: 0;
+}
+
+.user-about-cv-img textarea{
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ddd;
+}
+
+.user-about-cv-img button{
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #007bff;
+}
+
+.user-about-cv-img button:hover{
+    background-color: #0056b3;
+}
+
+
+.register-step4-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 1.2rem;
+}
+
+.register-step4-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.register-step4-avatar-icon {
+    background: #eee;
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-step4-label {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.register-step4-upload-btn {
+    display: inline-block;
+    background: #007bff;
+    color: #fff;
+    padding: 0.6rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    transition: background 0.2s;
+    text-align: center;
+}
+.register-step4-upload-btn:hover {
+    background: #0056b3;
+}
+
+.register-step4-btns {
+    display: flex;
+    
+    width: 100%;
+    gap: 0.5rem;
+}
+
+.register-step4-note {
+    font-size: 0.95rem;
+    color: #888;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .register-container {
+        flex-direction: column;
+        width: 95vw;
+        max-width: 95vw;
+        border-radius: 1.5rem;
+        padding: 1rem;
+    }
+    .register-form {
+        min-width: 0;
+        max-width: 98vw;
+        padding: 1.2rem 0.5rem;
+    }
+    .register-progress-bar-container {
+        max-width: 95vw;
+    }
+    .register-flex-row {
+        flex-direction: column;
+        gap: 1.5rem;
+        max-width: 98vw;
+    }
+    .register-header-col {
+        align-items: center;
+        margin-left: 0;
+        margin-top: 1rem;
+        max-width: 95vw;
+    }
+    .register-title, .register-description {
+        text-align: center;
+    }
+}
+
+.register-progress-bar-container {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto 1.5rem auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.register-progress-label {
+    font-size: 1rem;
+    color: #007bff;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+}
+
+.register-progress-bar-bg {
+    width: 100%;
+    height: 10px;
+    background: #e0e7ef;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.register-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #007bff 60%, #00c6ff 100%);
+    border-radius: 5px 0 0 5px;
+    transition: width 0.4s cubic-bezier(.4,2,.3,1);
+}
+
+.register-step3-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.register-step3-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.register-step3-fields {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+}
+
+.register-textarea {
+    width: 100%;
+    min-height: 160px;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    color: #222;
+    background: #fff;
+    resize: vertical;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 900px) {
+    .register-form {
+        min-width: 0;
+        max-width: 98vw;
+        padding: 1.2rem 0.5rem;
+    }
+}
+
+.skills-tags-input {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.skills-tags-scroll {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 0.2rem;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #f0f0f0;
+  max-width: 100%;
+}
+
+.skills-tags-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.skills-tags-scroll::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+.skills-tags-scroll::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  background: #ccc;
+  color: #222;
+  border-radius: 2rem;
+  padding: 0.4em 1em 0.4em 1em;
+  font-size: 1rem;
+  margin-right: 0.2em;
+  white-space: nowrap;
+}
+
+.remove-skill {
+  background: none;
+  border: none;
+  color: #222;
+  font-size: 1.1em;
+  margin-left: 0.5em;
+  cursor: pointer;
+  outline: none;
+}
+
+.skills-input {
+  border: none;
+  background: #f0f0f0;
+  font-size: 1rem;
+  width: 100%;
+  outline: none;
+  padding: 0.4em 0.5em;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+} 
