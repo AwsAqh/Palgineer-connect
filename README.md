@@ -1,12 +1,73 @@
-# React + Vite
+# Palgineer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Palgineer is a modern platform designed to help tech companies in Palestine discover and connect with talented software engineers. Unlike traditional job boards, Palgineer empowers engineers to showcase their skills, experience, and availability, while companies search and filter for the ideal candidates. For software engineers, this means they never miss out on internship or employment opportunities simply because a company closed an application before they even knew about it.
 
-Currently, two official plugins are available:
+## Features
+- Engineer-centric profiles: showcase skills, experience, status (available, hired, etc.) and CV.
+- Company search and filtering for engineers
+- Responsive, modern dashboard UI
+- Editable profile, tech stack, and resume upload
+- Add and manage social/professional links
+- Sidebar navigation with persistent layout
+- Avatar/profile picture upload
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
+- **Frontend:** React, CSS (custom, no framework), Material UI Icons
+- **State Management:** React Hooks
+- **Styling:** Custom CSS, Flexbox, Responsive Design
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+- Node.js (v14+ recommended)
+- npm or yarn
+
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/awsaqh/palgineer.git
+   cd palgineer
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+3. Start the development server:
+   ```bash
+   npm start
+   # or
+   yarn start
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Folder Structure
+```
+src/
+  ├── Pages/           # Main page components (Home, Dashboard, Register, etc.)
+  ├── Componetns/      # Reusable UI components (Header, Footer, FieldCard, etc.)
+  ├── styles/          # CSS files for each page/component
+  ├── assets/          # Images and static assets
+  ├── App.jsx          # Main app component
+  ├── index.css        # Global CSS variables and utilities
+  └── ...
+```
+
+## Usage
+- Register as a software engineer and fill out your profile.
+- Add your skills, experience, and set your availability status.
+- Upload your resume and profile picture.
+- Add social/professional links (LinkedIn, GitHub, etc.).
+- Companies can search and filter engineers based on skills and status.
+
+## Contribution
+Contributions are welcome! To contribute:
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a pull request
+
+## License
+This project is licensed under the MIT License.
