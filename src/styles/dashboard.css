@@ -16,7 +16,7 @@
     flex-direction: column;
     min-height: 100vh;
     background: #f5f7fa;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
 }
 
 .dashboard-page-content{
@@ -25,6 +25,7 @@
     flex: 1;
     min-height: 0;
     width: 100%;
+    overflow-x: auto;
 }
 
 .dash-side-nav-bar{
@@ -142,7 +143,7 @@
     display: flex;
     flex-direction: column;
     gap: 2.5rem;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
 }
 
 .basic-info{
@@ -267,7 +268,7 @@
 
 .tech-stack-container{
    
-   position:relative;
+   
    width: 100%;
    max-width: 100%;
     display: flex;
@@ -346,11 +347,21 @@
 .link-item{
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; 
+    gap: 0.5rem;
     align-items: center;
     padding: 0.5rem 1rem;
     border-bottom: 1px solid #6a11cb;
     color: #6a11cb;
+
+}
+
+.link-container{ 
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 
 }
 
@@ -444,26 +455,216 @@
     margin-bottom: 2rem;
 }
 
+/* Hide the toggle button on desktop */
+.sidebar-toggle , .sidebar-close-btn {
+  display: none;
+}
+
 @media (max-width: 900px) {
+  body, .dashboard-page-container {
+    overflow-x: hidden;
+  }
+  .dashboard-page-container,
+  .dashboard-page-content,
+  .dash-user-info,
+  .dashboard-card,
+  .tech-stack-area,
+  .resume-area,
+  .summary-input-area,
+  .links-area {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+  .sidebar-toggle , .sidebar-close-btn {
+        display: block;
+    }
+  .sidebar-toggle {
+    
+    border: none;
+    font-size: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(42,42,100,0.10);
+    cursor: pointer;
+  }
+
+
+  
+  .sidebar-close-btn {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 2.2rem;
+    color: #fff;
+    z-index: 1301;
+    cursor: pointer;
+  }
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 80px);
+    background: rgba(0,0,0,0.3);
+    z-index: 1200;
+  }
+  .dash-side-nav-bar {
+    position: fixed;
+    top: 80px;
+    left: -100vw; /* Hide sidebar by default */
+    width: 70vw;
+    max-width: 300px;
+    height: calc(100vh - 80px);
+    z-index: 1200;
+    transition: left 0.3s;
+    box-shadow: 2px 0 16px 0 rgba(42,42,100,0.10);
+    border-radius: 0 1rem 1rem 0;
+  }
+  .dash-side-nav-bar.open {
+    left: 0; /* Slide in */
+  }
+  .dashboard-page-content {
+    flex-direction: column;
+    overflow-x: visible;
+    margin-left: 0;
+    padding-top: 1rem;
+  }
+  .dash-main-content {
+    width: 100%;
+    border-radius: 0 0 2rem 2rem;
+    padding: 1rem 0.5rem;
+  }
+  .dashboard-card {
+    width: 100% !important;
+    padding: 1rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .basic-info{padding-top: 80px !important;}
+  .basic-info-form-area-row,
+  .basic-info-form-area {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.7rem;
+  }
+  .dash-user-info-avatar {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  .dash-user-info-avatar>div {
+    width: 120px;
+    height: 120px;
+  }
+  .tech-stack-area,
+  .resume-area,
+  .summary-input-area,
+  .links-area {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 1rem 0.5rem;
+  }
+  .tech-stack-container {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-right: 0;
+  }
+  .skill {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+    height: auto;
+  }
+  .links-items-container {
+    padding: 0.5rem 0.2rem;
+  }
+  .link-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.2rem;
+  }
+  .link-item-logo {
+    font-size: 1rem;
+  }
+  .dashboard-page-container,
+  .dashboard-page-content {
+    overflow-x: hidden;
+    width: 100vw;
+    max-width: 100vw;
+  }
+  .dash-user-info {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
+  }
+  .dashboard-card,
+  .tech-stack-area,
+  .resume-area,
+  .summary-input-area,
+  .links-area {
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
+  }
+.resume-area img{
+    width: 80px;
+    height: 80px;
+}
+
+}
+
+@media (max-width: 600px) {
+  body, .dashboard-page-container {
+    overflow-x: hidden;
+  }
+  .dashboard-page-container,
+  .dashboard-page-content,
+  .dash-user-info,
+  .dashboard-card,
+  .tech-stack-area,
+  .resume-area,
+  .summary-input-area,
+  .links-area {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+    .sidebar-toggle , .sidebar-close-btn{
+        display: block;
+    }
+    .dashboard-page-content {
+        padding-top: 0.5rem;
+    }
     .dash-side-nav-bar {
-        width: 60px;
-        min-width: 60px;
-        padding: 1rem 0.2rem;
-        align-items: center;
-        border-radius: 0 0.5rem 0.5rem 0;
+        font-size: 0.95rem;
+        padding: 0.5rem 0.2rem;
     }
-    .dash-side-nav-options {
-        flex-direction: column;
-        gap: 1.2rem;
-        margin-top: 0;
+    .dashboard-card {
+        padding: 0.5rem 0.2rem;
+        margin-bottom: 0.7rem;
     }
-    .dash-side-nav-options span, .dash-side-nav-logout span {
-        display: none;
+    .dash-user-info-avatar>div {
+        width: 80px;
+        height: 80px;
     }
-    .dash-side-nav-options, .dash-side-nav-logout {
-        align-items: center;
-        justify-content: center;
+    .skill {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem 0.3rem 0.6rem;
     }
+    .link-item {
+        font-size: 0.85rem;
+    }
+}
+
+body {
+  overflow-x: hidden;
 }
 
 

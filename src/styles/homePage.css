@@ -215,12 +215,37 @@
     }
 }
 @media (max-width: 600px) {
+
+
+
+    
+
+    .home-content {
+        width: 80%;
+        max-width: 100vw;
+    }
     .home-banner {
         min-height: 30vh;
     }
     .banner-content h1 {
-        font-size: 1.5rem;
+        font-size: 1.5rem;  
     }
+
+    body, .register-page-container {
+        overflow-x: hidden;
+    }
+
+    .field-cards{
+        display: flex;
+        flex-direction: column !important;
+        align-items: center;
+    }
+
+    .home-content, .search-fields, .home-about, .fields-area{
+        width: 80% !important;
+    }
+
+
 }
 
 

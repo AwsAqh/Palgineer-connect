@@ -15,7 +15,10 @@
 .header-logo {
     font-size: 24px;
     font-weight: 600;
-    color: #000;
+    
+    display: flex;
+    align-items: center;
+    
 }
 .header-menu {
     display: flex;
@@ -29,6 +32,58 @@
     display: flex;
     gap: 20px;
 }
+
+
+@media (max-width: 900px) {
+    .header-container {
+      
+        height: auto;
+    }
+}
+
+@media (max-width: 600px) {
+
+    
+    .user-auth button{
+        display: none;
+    }
+
+
+    .header-container {
+       width: 100%;
+        height: auto;
+    }   
+
+    .header-menu {
+        
+        gap: 10px;
+    }   
+
+    .header-menu-item {
+        width: 100%;
+        text-align: center;
+    }   
+
+    .user-auth {
+      
+        gap: 10px;
+    }      
+
+    .user-auth-item {
+        width: 100%;
+        text-align: center;
+    }      
+
+    .user-auth-item-btn {
+        width: 100%;
+        text-align: center;
+    }           }      
+    
+    
+
+
+
+
 
 
 

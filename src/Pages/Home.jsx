@@ -7,7 +7,7 @@ import FieldCard from '../Componetns/field-card'
 import Footer from '../Componetns/footer'
 const HomePage = () => {
   return (
-    <div className='full-page-container'> 
+    <div className='register-page-container'> 
         <Header />
     <div className='home-content'>
          <div className='home-banner'>

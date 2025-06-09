@@ -6,6 +6,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
+import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
+import ListTwoToneIcon from '@mui/icons-material/ListTwoTone';
 import '../styles/dashboard.css';
 import pdfImage from '../assets/pdf-image.png';
 
@@ -16,16 +18,6 @@ const Dashboard = () => {
     const [skills,setSkills] = useState(['reactJS','reactNasdsfsdfsdfsdfsdftive','nodeJS','express','mongodb','mysql','postgresql','firebase','aws','docker']);
     const [addSkillInputAppeared,setAddSkillInputAppeared] = useState(false);
     const[addLinkFormAppeared,setAddLinkFormAppeared] = useState(false);
-    const emailRef = useRef(null);
-    const fullNameRef = useRef(null);
-    const experienceRef = useRef(null);
-    const statusRef = useRef(null);
-    const summaryRef = useRef(null);
-    const addSkillInputRef = useRef(null);
-    const linkNameRef = useRef(null);
-    const linkUrlRef = useRef(null);
-    
-
     const [links,setLinks] = useState([
         {
            name:'LinkedIn',
@@ -41,25 +33,76 @@ const Dashboard = () => {
         },
         
     ])
+    const[editLinkFormAppeared,setEditLinkFormAppeared] = useState(Array(links.length).fill(false));
+
+    const emailRef = useRef(null);
+    const fullNameRef = useRef(null);
+    const experienceRef = useRef(null);
+    const statusRef = useRef(null);
+    const summaryRef = useRef(null);
+    const addSkillInputRef = useRef(null);
+    const linkNameRef = useRef(null);
+    const linkUrlRef = useRef(null);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     
+    const editLinksNamesRef = useRef(Array(links.length).fill([links.map(link=>link.name)]));
+    const editLinksUrlsRef = useRef(Array(links.length).fill([links.map(link=>link.url)]));
+    
+    const [editLinksNamesState, setEditLinksNamesState] = useState(
+        Array(links.length).fill('').map((_, index) => links[index].name)
+      );
+      const [editLinksUrlsState, setEditLinksUrlsState] = useState(
+        Array(links.length).fill('').map((_, index) => links[index].url)
+      );
+
+
+      const [formData,setFormData] = useState({
+        avatar:null,
+        fullName:'',
+        email:'',
+        experience:'',
+        status:'',
+        summary:'',
+        skills:skills,
+        links:links,
+        resume:null
+      })
+
+    useEffect(() => {
+      const handleClick = (e) => {
+        if(e.target.className==='tech-stack-container' || e.target.id==='add-skill-input')  setAddSkillInputAppeared(true) 
+        else  setAddSkillInputAppeared(false)
+         
+
+         if (
+                e.target.closest('.links-area') && !e.target.className.includes('edit-icon') && !e.target.className.includes('edit-link-form-input')
+            ) {
+                setAddLinkFormAppeared(true);
+            } 
+           
+            else
+            if(e.target.className.includes('edit-link-form-input'))
+            {}
+            else{
+                setAddLinkFormAppeared(false);
+             setEditLinkFormAppeared(Array(links.length).fill(false))
+               
+            }
+      };
+      document.addEventListener('click', handleClick);
+      return () => {
+        document.removeEventListener('click', handleClick);
+      };
+    }, []);
 
     useEffect(()=>{
 
-            document.addEventListener('click',(e)=>{
-                if(e.target.className==='tech-stack-container' || e.target.id==='add-skill-input')  setAddSkillInputAppeared(true) 
-                else  setAddSkillInputAppeared(false)
-                 
-                
-                 if (
-                        e.target.closest('.links-area') || e.target.className.includes('links-area') || e.target.className==='links-items-container' || e.target.id==='add-link-form'
-                        
-                    ) {
-                        setAddLinkFormAppeared(true);
-                    } else {
-                        setAddLinkFormAppeared(false);
-                    }
-            })
-    },[])
+        setEditLinksNamesState(links.map(link => link.name));
+    setEditLinksUrlsState(links.map(link => link.url));
+
+    },[links])
+
+
     const handleAvatarChange=(e)=>{
         let file = e.target.files[0];
         console.log(file)
@@ -75,22 +118,69 @@ const Dashboard = () => {
     }
 
     const handleAddLink=()=>{
+       
         setLinks([...links,  {name:linkNameRef.current.value, url:linkUrlRef.current.value}  ]  )
+        setEditLinkFormAppeared([...editLinkFormAppeared, false])
+        setEditLinksNamesState([...editLinksNamesState, ''])
+        setEditLinksUrlsState([...editLinksUrlsState, ''])
         setAddLinkFormAppeared(false)
         linkNameRef.current.value=''
         linkUrlRef.current.value=''
     }
 
-
+    
     const handleRemoveLink=(link)=>{
         setLinks(links.filter(l=>l!==link))
     }
 
+    const handleOpenEditLinkForm=(index)=>{
+        setEditLinkFormAppeared(editLinkFormAppeared.map((_,i)=>i===index))
+    }
+
+
+    const handleNameChange = (index, value) => {
+        setEditLinksNamesState((prevState) => {
+          const updatedState = [...prevState];
+          updatedState[index] = value; // Update only the specific index for the name
+          return updatedState;
+        });
+      };
+      
+      const handleUrlChange = (index, value) => {
+        setEditLinksUrlsState((prevState) => {
+          const updatedState = [...prevState];
+          updatedState[index] = value; // Update only the specific index for the url
+          return updatedState;
+        });
+      };
+
+
+
+    const handleSubmitEditLink=(index)=>{
+
+
+        setLinks(links.map((link,i)=>i===index?{name:editLinksNamesRef.current[index].value,
+             url:editLinksUrlsRef.current[index].value}:link))
+
+             setEditLinkFormAppeared(editLinkFormAppeared.map((_,i)=>false))
+    }
   return (
     <div className='dashboard-page-container'>
-        <Header/>
+        <Header 
+          onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} 
+          sidebarOpen={sidebarOpen}
+        />
         <div className='dashboard-page-content'>
-            <div className='dash-side-nav-bar'>
+            {/* Sidebar and overlay */}
+            <div className={`dash-side-nav-bar${sidebarOpen ? ' open' : ''}`}>
+                {/* Close button for mobile */}
+                <button 
+                  className='sidebar-close-btn' 
+                  onClick={() => setSidebarOpen(false)}
+                  aria-label='Close sidebar'
+                >
+                  &times;
+                </button>
                 <div className='side-nav-bar-options-fixed'>
                     <div className='dash-side-nav-bar-list'>
                         <ul>
@@ -109,8 +199,13 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-
-        
+            {/* Overlay for closing sidebar on mobile */}
+            {sidebarOpen && (
+              <div 
+                className='sidebar-overlay' 
+                onClick={() => setSidebarOpen(false)}
+              />
+            )}
             <div className='dash-user-info'>
                 <div className='basic-info dashboard-card'>
 
@@ -174,9 +269,13 @@ const Dashboard = () => {
                     <div className='tech-stack-area dashboard-card'>
                     Tech stack
                     <div className='tech-stack-container'>
-                        {skills.map(skill=>{
-                           return <div onClick={()=>{handleRemoveSkill(skill)}} className='skill'>{skill}</div>
-                        })}
+                            
+                            {skills.length >0?
+                                skills.map((skill,index)=>{
+                                return <div key={index}  onClick={()=>{handleRemoveSkill(skill)}} className='skill'>{skill}</div>
+                                }):
+                        <div style={{width:'100%', textAlign:'center'}}>No skills found</div>
+                        }
                         <input
                           id="add-skill-input"
                           className={addSkillInputAppeared ? 'add-skill-input-appeared' : 'add-skill-input-hidden'}
@@ -197,22 +296,51 @@ const Dashboard = () => {
                         <div className='links-area dashboard-card'>
                            Links
                            <div className='links-items-container'>
-                       {links.map(link=>{
+                      {links.length >0?      
+                       links.map((link,index)=>{
                         return(
-                        <div className='link-item'>
-                            <div className='link-item-logo' >
-                                <SocialIcon  style={{width:35,height:35}} url={link.url} />
-                                <span>{link.name}</span>
+                        <div key={index} className='link-item'>
+                             <div className='link-container'>
+                                    <div className='link-item-logo' >
+                                        <SocialIcon  style={{width:35,height:35}} url={link.url} />
+                                        <span>{link.name}</span>
+                                    </div>
+                                    <span>{link.url}</span>
+                                    <div>
+                                        <EditTwoToneIcon className='edit-icon' onClick={()=>{
+                                            console.log(editLinkFormAppeared)
+                                            handleOpenEditLinkForm(index)}}/>
+                                        <DeleteTwoToneIcon onClick={()=>handleRemoveLink(link)}/>
+                                    </div>
+                             </div>
+
+                                <div id='edit-link-form' className={editLinkFormAppeared[index] ? 'add-link-form' : 'hidden'}>
+                                    <input 
+                                    className='edit-link-form-input'
+                                    ref={el => editLinksNamesRef.current[index] = el}
+                                    type='text' 
+                                    placeholder={link.name} 
+                                    value={editLinksNamesState[index]}
+                                     onChange={(e)=>handleNameChange(index,e.target.value)}
+                                    />
+                                    
+                                    <input 
+                                    className='edit-link-form-input'
+                                    ref={el => editLinksUrlsRef.current[index] = el}
+                                    style={{width:'100%'}} type='text' 
+                                    placeholder={link.url}
+                                    onChange={(e)=>handleUrlChange(index,e.target.value)}
+                                    value={editLinksUrlsState[index]}
+                                    />
+                                    <CheckTwoToneIcon onClick={()=>{handleSubmitEditLink(index)}}/>
                             </div>
-                            <span>{link.url}</span>
-                            <div>
-                                <EditTwoToneIcon/>
-                                <DeleteTwoToneIcon onClick={()=>handleRemoveLink(link)}/>
-                            </div>
+
+
                         </div>
                         )
-                       })}
-                             
+                       }):
+                       <div>No links found</div>
+                       }
                        <div id='add-link-form' className={addLinkFormAppeared ? 'add-link-form' : 'hidden'}>
                         <input 
                         ref={linkNameRef}
@@ -229,9 +357,10 @@ const Dashboard = () => {
 
 
                     <div className="resume-area dashboard-card">
-                        <input type='file' placeholder='Upload Resume' />
+                        <input id='resume-upload' name='resume-upload' type='file' accept='.pdf,.doc,.docx' 
+                         onChange={(e)=>setFormData({...formData,resume:e.target.files[0]})}/>
                         <img src={pdfImage} alt='upload resume' />
-                        <label htmlFor='resume-upload'>Upload Resume</label>
+                        <label htmlFor='resume-upload'>{formData.resume ? formData.resume.name : 'Upload Resume'}</label>
                         <div> Accepted files: pdf, doc, docx </div>
                     </div>
                </div>

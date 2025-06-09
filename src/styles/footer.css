@@ -43,6 +43,22 @@
 }   
 
 
+@media (max-width: 900px) {
+    .footer-content {
+        flex-direction: column;
+    }
+}   
+
+@media (max-width: 600px) {
+    .footer-content {
+        flex-direction: column;
+    }
+}   
+
+
+
+
+
 
 
 
