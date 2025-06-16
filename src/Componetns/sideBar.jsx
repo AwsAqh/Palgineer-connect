@@ -1,6 +1,8 @@
 import React from 'react'
-import "../Styles/dashboard.css"
+import "../Styles/navbar.css"
 import PersonIcon from '@mui/icons-material/Person';
+import DashboardTwoToneIcon from '@mui/icons-material/DashboardTwoTone';
+import TravelExploreTwoToneIcon from '@mui/icons-material/TravelExploreTwoTone';
 const sideBar = ({sidebarOpen, setSidebarOpen}) => {
   return (
     <>
@@ -17,12 +19,12 @@ const sideBar = ({sidebarOpen, setSidebarOpen}) => {
         <div className='dash-side-nav-bar-list'>
             <ul>
                 <li>
-                    <PersonIcon/>
-                    Profile
+                    <DashboardTwoToneIcon/>
+                    <span>Dashboard</span>
                 </li>
                 <li>
-                    <PersonIcon/>
-                    <span>Profile</span>
+                    <TravelExploreTwoToneIcon/>
+                    <span>Find Engineer</span>
                 </li>
             </ul>
         </div>

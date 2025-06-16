@@ -23,7 +23,7 @@ const FindEng = () => {
 
 
             <div className='search-area'>
-               <div className='search-area-form cardd'>
+               <div className='search-area-form'>
                     <input type='text' placeholder='Search' />
                     <div className='search-area-form-selects'>
                     <select>
@@ -54,7 +54,7 @@ const FindEng = () => {
 
 
 
-            <div className='search-results cardd'>
+            <div className='search-results'>
               
 
                     <div   className='results-table'>
