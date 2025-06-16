@@ -4,6 +4,7 @@ import LoginPage from './Pages/Login'
 import RegisterPage from './Pages/Register'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './Pages/Dashboard';
+import FindEng from './Pages/FindEng';
 function App() {
  
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/find" element={<FindEng />} />
       </Routes>
     </Router>
    

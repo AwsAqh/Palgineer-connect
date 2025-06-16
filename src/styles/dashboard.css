@@ -147,8 +147,8 @@
 }
 
 .basic-info{
-   
-
+  
+    min-height: 350px;
     width: 100% !important;
     display: flex;
     justify-content: space-around;
@@ -157,6 +157,9 @@
     margin-bottom: 2rem;
     transition: box-shadow 0.2s;
 }
+
+
+
 .basic-info:hover {
     box-shadow: 0 8px 32px 0 rgba(42,42,100,0.18);
 }
@@ -169,7 +172,8 @@
     align-items: center;
     justify-content: space-around;
     gap: 1.5rem;
-
+    align-items: flex-end;
+    padding-right: 10%;
 }
 
 .basic-info-form-area-row>div{width:45%}

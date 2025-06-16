@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import Header from '../Componetns/header';
 import Footer from '../Componetns/footer';
+import Sidebar from '../Componetns/sideBar';
 import PersonIcon from '@mui/icons-material/Person';
 import EditIcon from '@mui/icons-material/Edit';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
@@ -10,7 +11,7 @@ import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import ListTwoToneIcon from '@mui/icons-material/ListTwoTone';
 import '../styles/dashboard.css';
 import pdfImage from '../assets/pdf-image.png';
-
+import Notification from '../Componetns/notification';
 import {SocialIcon} from 'react-social-icons';
 
 const Dashboard = () => {
@@ -18,6 +19,7 @@ const Dashboard = () => {
     const [skills,setSkills] = useState(['reactJS','reactNasdsfsdfsdfsdfsdftive','nodeJS','express','mongodb','mysql','postgresql','firebase','aws','docker']);
     const [addSkillInputAppeared,setAddSkillInputAppeared] = useState(false);
     const[addLinkFormAppeared,setAddLinkFormAppeared] = useState(false);
+  
     const [links,setLinks] = useState([
         {
            name:'LinkedIn',
@@ -34,17 +36,32 @@ const Dashboard = () => {
         
     ])
     const[editLinkFormAppeared,setEditLinkFormAppeared] = useState(Array(links.length).fill(false));
+    const [fullNameState,setFullNameState] = useState('');
+    const [emailState,setEmailState] = useState('');
+    const [experienceState,setExperienceState] = useState('1');
+    const [statusState,setStatusState] = useState('1');
+    const [resumeState,setResumeState] = useState(null);
+    const [showNotification,setShowNotification] = useState(false);
+
+
+    const[notification,setNotification] = useState({
+        message:'',
+        type:'',
+        show:showNotification,
+        actions:[]
+
+    });
+
 
     const emailRef = useRef(null);
     const fullNameRef = useRef(null);
     const experienceRef = useRef(null);
     const statusRef = useRef(null);
     const summaryRef = useRef(null);
-    const addSkillInputRef = useRef(null);
+    const [summaryState,setSummaryState] = useState('');
     const linkNameRef = useRef(null);
     const linkUrlRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    
     const editLinksNamesRef = useRef(Array(links.length).fill([links.map(link=>link.name)]));
     const editLinksUrlsRef = useRef(Array(links.length).fill([links.map(link=>link.url)]));
     
@@ -55,18 +72,37 @@ const Dashboard = () => {
         Array(links.length).fill('').map((_, index) => links[index].url)
       );
 
+     
+
 
       const [formData,setFormData] = useState({
         avatar:null,
         fullName:'',
         email:'',
-        experience:'',
-        status:'',
+        experience:'1',
+        status:'1',
         summary:'',
         skills:skills,
         links:links,
         resume:null
       })
+
+
+
+      useEffect(()=>{
+
+            
+        setNotification({
+            message:'Submit Changes',
+            type:'green-background',
+            show:true,
+            actions:[
+            {action:'Submit' , onClick:()=>{ setFormData({...formData, skills:skills,links:links,resume:resumeState }); setNotification({...notification,show:false})   }} ,
+            {action:'Cancel' , onClick:()=>{ setResumeState(formData.resume);  setLinks(formData.links); setSkills(formData.skills);setNotification({...notification,show:false});  }}  ]
+        })
+
+
+      },[links,skills,resumeState])
 
     useEffect(() => {
       const handleClick = (e) => {
@@ -102,24 +138,76 @@ const Dashboard = () => {
 
     },[links])
 
+    const prevFormDataRef = useRef(); // Track previous formData
+
+    // Function to check if the formData has changed
+    const hasFormDataChanged = () => {
+      // Check for a shallow comparison of formData properties
+      const prevData = prevFormDataRef.current;
+  
+      // If previous formData is null (first render), return false to avoid triggering on mount
+      if (!prevData) return false;
+  
+      // Perform a shallow comparison of relevant properties
+      return (
+       
+        
+        
+        
+        
+        
+        prevData.skills !== formData.skills ||
+        prevData.links !== formData.links ||
+        prevData.resume !== formData.resume
+      );
+    };
+  
+    useEffect(()=>{
+
+        
+        
+    },[links,skills,resumeState])
+
+    useEffect(() => {
+      // Skip the effect during the first render
+      if (!prevFormDataRef.current) {
+        prevFormDataRef.current = formData; // Set it after the first render
+        return;
+      }
+    
+      // Only trigger notification if formData has changed (post-mount)
+      if (hasFormDataChanged()) {
+        
+      }
+  
+      // Update the previous formData ref to the current formData
+      prevFormDataRef.current = formData;
+    }, [formData]); // Effect depends on formData
+  
 
     const handleAvatarChange=(e)=>{
         let file = e.target.files[0];
         console.log(file)
         if(file){
             const url=URL.createObjectURL(file)
+          
             setAvatar(url)
         }
     }
 
 
     const handleRemoveSkill=(skill)=>{
-        setSkills(skills.filter(s=>s!==skill))
+        const newSkills=skills.filter(s=>s!==skill) 
+       
+        setSkills(newSkills)
+        handleShowSubmitNotification()
+        console.log("show called")
     }
 
     const handleAddLink=()=>{
        
         setLinks([...links,  {name:linkNameRef.current.value, url:linkUrlRef.current.value}  ]  )
+       handleShowSubmitNotification()
         setEditLinkFormAppeared([...editLinkFormAppeared, false])
         setEditLinksNamesState([...editLinksNamesState, ''])
         setEditLinksUrlsState([...editLinksUrlsState, ''])
@@ -130,7 +218,11 @@ const Dashboard = () => {
 
     
     const handleRemoveLink=(link)=>{
-        setLinks(links.filter(l=>l!==link))
+        const newLinks=links.filter(l=>l!==link)
+        
+        setLinks(newLinks)
+        
+        handleShowSubmitNotification()
     }
 
     const handleOpenEditLinkForm=(index)=>{
@@ -154,9 +246,11 @@ const Dashboard = () => {
         });
       };
 
-
+      
 
     const handleSubmitEditLink=(index)=>{
+        
+       
 
 
         setLinks(links.map((link,i)=>i===index?{name:editLinksNamesRef.current[index].value,
@@ -164,48 +258,26 @@ const Dashboard = () => {
 
              setEditLinkFormAppeared(editLinkFormAppeared.map((_,i)=>false))
     }
+
+    const handleShowSubmitNotification=()=>{
+        console.log("in show , ",links)
+       
+       
+    }
+
+
   return (
     <div className='dashboard-page-container'>
         <Header 
           onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} 
           sidebarOpen={sidebarOpen}
         />
+
+        <Notification title= {notification.message} actions= {notification.actions} showNotification={notification.show} type={notification.type}/>
         <div className='dashboard-page-content'>
-            {/* Sidebar and overlay */}
-            <div className={`dash-side-nav-bar${sidebarOpen ? ' open' : ''}`}>
-                {/* Close button for mobile */}
-                <button 
-                  className='sidebar-close-btn' 
-                  onClick={() => setSidebarOpen(false)}
-                  aria-label='Close sidebar'
-                >
-                  &times;
-                </button>
-                <div className='side-nav-bar-options-fixed'>
-                    <div className='dash-side-nav-bar-list'>
-                        <ul>
-                            <li>
-                                <PersonIcon/>
-                                Profile
-                            </li>
-                            <li>
-                                <PersonIcon/>
-                                <span>Profile</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div id='logout_div'>
-                        Logout
-                    </div>
-                </div>
-            </div>
-            {/* Overlay for closing sidebar on mobile */}
-            {sidebarOpen && (
-              <div 
-                className='sidebar-overlay' 
-                onClick={() => setSidebarOpen(false)}
-              />
-            )}
+
+            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
+            
             <div className='dash-user-info'>
                 <div className='basic-info dashboard-card'>
 
@@ -223,18 +295,26 @@ const Dashboard = () => {
                         <div className='basic-info-form-area-row'>
                                 <div>
                                 <label htmlFor='full-name'>Full Name</label>
-                                <input ref={fullNameRef} type='text' name='full-name' class="form-control" placeholder='Full Name'/>
+                                <input value={fullNameState} onChange={(e)=>{setFullNameState(e.target.value)}} type='text' name='full-name' className="form-control" placeholder='Full Name'/>
                                 </div>
+
+
                                 <div>
                                 <label htmlFor='email'>Email</label>
-                                <input ref={emailRef} type='text' name='email' class="form-control" placeholder='john.doe@example.com' />
+                                <input value={emailState} onChange={(e)=>{setEmailState(e.target.value)}} type='text' name='email' className="form-control" placeholder='john.doe@example.com' />
                                  </div>
                         </div>
 
                         <div className='basic-info-form-area-row'>
                         <div  >
                             <label htmlFor='experience'>Experience</label>
-                                <select ref={experienceRef} className='form-control' name='experience'>
+                                <select value={experienceState}
+                                 onChange={(e)=>{
+                                   
+                                    setExperienceState(e.target.value)
+                                    console.log(e.target.value)
+                                    }} 
+                                    className='form-control' name='experience'>
                                     <option value='1'>Beginner</option>
                                     <option value='2'>Intermediate</option>
                                     <option value='3'>Advanced</option>
@@ -244,7 +324,9 @@ const Dashboard = () => {
                                 </div>
                                 <div>
                             <label htmlFor='status'>Status</label>
-                                <select ref={statusRef} className='form-control' name='status'>
+                                <select value={statusState} onChange={(e)=>{
+                                  
+                                    setStatusState(e.target.value)}} className='form-control' name='status'>
                                     <option value='1'>Available</option>
                                     <option value='2'>Hired</option>
                                     <option value='3'>On Leave</option>
@@ -253,17 +335,29 @@ const Dashboard = () => {
                                 </select>
                                 </div>
                         </div>
+                    <div style={{width:'30%', display:'flex',justifyContent:'space-between'}}>
+                       <button  className={( formData.avatar!==avatar  ||formData.fullName!==fullNameState || formData.email!==emailState || formData.experience!==experienceState || formData.status!==statusState) ? 'btn btn btn-outline-primary btn-sm' : 'hidden'} 
+                       
+                       onClick={()=>{setAvatar(formData.avatar);setFullNameState(formData.fullName);setEmailState(formData.email);setExperienceState(formData.experience);setStatusState(formData.status)}} >Discard changes</button> 
+                     
+                     <button   className={( formData.avatar!==avatar  ||formData.fullName!==fullNameState || formData.email!==emailState || formData.experience!==experienceState || formData.status!==statusState) ? 'btn btn-primary btn-sm' : 'hidden'}
+                        onClick={()=>{
+                          
+                            setFormData({...formData,avatar:avatar,fullName:fullNameState,email:emailState,experience:experienceState,status:statusState}); }}
+                     >Save</button>
                         
+                    </div>
                     </div>
                </div>
                <div  className='technical-info'>
                     <div className='summary-input-area dashboard-card'>
                         <label htmlFor='summary'>Summary</label>
                         
-                        <textarea ref={summaryRef} type='text' name='summary' placeholder='Summary' value="This is summary, this is summary This is summary, this is summary This is summary, this is summary
-                        This is summary, this is summary
-                        This is summary, this is summary
-                        This is summary, this is summary" />
+                        <textarea ref={summaryRef} type='text' name='summary' placeholder='Write a summary about yourself'  onChange={(e)=>{setSummaryState(e.target.value)}}/>
+                        <div><button className={formData.summary===summaryState ? 'hidden' : ''} onClick={()=>{
+                            setFormData({...formData,summary:summaryState})
+                            
+                            }}>Save</button></div>
                     </div>
 
                     <div className='tech-stack-area dashboard-card'>
@@ -284,7 +378,9 @@ const Dashboard = () => {
                           onBlur={() => setAddSkillInputAppeared(false)}
                           onKeyDown={(e)=>{
                             if(e.key==='Enter'&& e.target.value){
+                               
                                 setSkills([...skills,e.target.value])
+                               handleShowSubmitNotification()
                                 e.target.value=''
                             }
                           }}
@@ -358,9 +454,13 @@ const Dashboard = () => {
 
                     <div className="resume-area dashboard-card">
                         <input id='resume-upload' name='resume-upload' type='file' accept='.pdf,.doc,.docx' 
-                         onChange={(e)=>setFormData({...formData,resume:e.target.files[0]})}/>
+                         onChange={(e)=>{
+                            
+                            setResumeState(e.target.files[0])
+                            handleShowSubmitNotification()
+                            }}/>
                         <img src={pdfImage} alt='upload resume' />
-                        <label htmlFor='resume-upload'>{formData.resume ? formData.resume.name : 'Upload Resume'}</label>
+                        <label htmlFor='resume-upload'>{resumeState ? resumeState.name : 'Upload Resume'}</label>
                         <div> Accepted files: pdf, doc, docx </div>
                     </div>
                </div>
