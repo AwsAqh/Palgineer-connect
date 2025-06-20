@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import Header from '../Componetns/header'
 import banner from '../assets/team-work.jpg'
 import about from '../assets/team-work-about.jpg'
@@ -6,6 +7,7 @@ import '../styles/homePage.css'
 import FieldCard from '../Componetns/field-card'
 import Footer from '../Componetns/footer'
 const HomePage = () => {
+  const navigate = useNavigate()
   return (
     <div className='register-page-container'> 
         <Header />
@@ -15,7 +17,7 @@ const HomePage = () => {
             <div className='banner-content'>
                 <h1>Welcome to Palgineer</h1>
                 <p>The best place to learn and grow</p> 
-                <button className='btn btn-primary'>Get Started</button>
+                <button className='btn btn-primary' onClick={() => navigate('/find')}>Get Started</button>
             </div>
          </div>
          <div className='search-fields'>

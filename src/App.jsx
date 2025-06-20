@@ -15,6 +15,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/find" element={<FindEng />} />
+        <Route path="/profile" element={<Dashboard />} />
       </Routes>
     </Router>
    

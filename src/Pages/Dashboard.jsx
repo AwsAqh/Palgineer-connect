@@ -1,4 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from '../Componetns/header';
 import Footer from '../Componetns/footer';
 import Sidebar from '../Componetns/sideBar';
@@ -15,32 +16,21 @@ import Notification from '../Componetns/notification';
 import {SocialIcon} from 'react-social-icons';
 
 const Dashboard = () => {
-    const [avatar,setAvatar] = useState(null);
-    const [skills,setSkills] = useState(['reactJS','reactNasdsfsdfsdfsdfsdftive','nodeJS','express','mongodb','mysql','postgresql','firebase','aws','docker']);
+    const [user,setUser] = useState(JSON.parse(localStorage.getItem("user")))
+    const lastPath = useLocation().pathname.split('/').pop();
+    const [avatar,setAvatar] = useState(user.avatar);
+    const [avatarFormData,setAvatarFormData] = useState(user.avatar)
+    const [skills,setSkills] = useState(user.skills);
     const [addSkillInputAppeared,setAddSkillInputAppeared] = useState(false);
     const[addLinkFormAppeared,setAddLinkFormAppeared] = useState(false);
   
-    const [links,setLinks] = useState([
-        {
-           name:'LinkedIn',
-           url:'https://www.linkedin.com/in/john-doe-1234567890'
-        },
-        {
-            name:'LinkedIn',
-            url:'https://www.linkedin.com/in/john-doe-1234567890'
-        },
-        {
-            name:'LinkedIn',
-            url:'https://www.linkedin.com/in/john-doe-1234567890'
-        },
-        
-    ])
+    const [links,setLinks] = useState(user.links || [])
     const[editLinkFormAppeared,setEditLinkFormAppeared] = useState(Array(links.length).fill(false));
-    const [fullNameState,setFullNameState] = useState('');
-    const [emailState,setEmailState] = useState('');
-    const [experienceState,setExperienceState] = useState('1');
-    const [statusState,setStatusState] = useState('1');
-    const [resumeState,setResumeState] = useState(null);
+    const [fullNameState,setFullNameState] = useState(user.name);
+    const [emailState,setEmailState] = useState(user.email);
+    const [experienceState,setExperienceState] = useState(user.experience);
+    const [statusState,setStatusState] = useState(user.status);
+    const [resumeState,setResumeState] = useState(user.resume);
     const [showNotification,setShowNotification] = useState(false);
 
 
@@ -53,10 +43,6 @@ const Dashboard = () => {
     });
 
 
-    const emailRef = useRef(null);
-    const fullNameRef = useRef(null);
-    const experienceRef = useRef(null);
-    const statusRef = useRef(null);
     const summaryRef = useRef(null);
     const [summaryState,setSummaryState] = useState('');
     const linkNameRef = useRef(null);
@@ -74,34 +60,65 @@ const Dashboard = () => {
 
      
 
-
+      const IsMounted=useRef(false)
       const [formData,setFormData] = useState({
-        avatar:null,
-        fullName:'',
-        email:'',
-        experience:'1',
-        status:'1',
-        summary:'',
-        skills:skills,
-        links:links,
-        resume:null
+        avatar:user.avatar,
+        fullName:user.name,
+        email:user.email,
+        experience:user.experience,
+        status:user.status,
+        summary:user.summary,
+        skills:user.skills,
+        links:user.links,
+        resume:user.resume
       })
 
 
 
+
+      useEffect(()=>{
+        const token = localStorage.getItem("token");
+        const now=new Date()
+        const tokenExpiry=new Date(token.expiresIn)
+        if (now>tokenExpiry) {
+          localStorage.removeItem("token")
+          navigate("/login")
+        }
+      },[])
+
+
       useEffect(()=>{
 
-            
-        setNotification({
-            message:'Submit Changes',
-            type:'green-background',
-            show:true,
-            actions:[
-            {action:'Submit' , onClick:()=>{ setFormData({...formData, skills:skills,links:links,resume:resumeState }); setNotification({...notification,show:false})   }} ,
-            {action:'Cancel' , onClick:()=>{ setResumeState(formData.resume);  setLinks(formData.links); setSkills(formData.skills);setNotification({...notification,show:false});  }}  ]
-        })
+        const timeOutId=setTimeout(()=>{IsMounted.current=true},0)
+
+        return ()=>clearTimeout(timeOutId)
 
 
+
+      },[])
+
+
+     
+      useEffect(()=>{
+
+
+        // Skip effect on initial mount
+        if (IsMounted.current) {
+          const hasChanges = JSON.stringify(formData.skills) !== JSON.stringify(skills) ||
+                           JSON.stringify(formData.links) !== JSON.stringify(links) ||
+                           formData.resume !== resumeState;
+          
+          if (hasChanges) {
+            setNotification({
+                message:'Submit Changes',
+                type:'green-background',
+                show:true,
+                actions:[
+                {action:'Submit' , onClick:()=>{ setFormData({...formData, skills:skills,links:links,resume:resumeState,avatar:avatarFormData }); setNotification({...notification,show:false});   }} ,
+                {action:'Cancel' , onClick:()=>{ setResumeState(formData.resume);  setLinks(formData.links); setSkills(formData.skills);setAvatar(formData.avatar);setNotification({...notification,show:false});  }}  ]
+            });
+          }
+        }
       },[links,skills,resumeState])
 
     useEffect(() => {
@@ -137,6 +154,8 @@ const Dashboard = () => {
     setEditLinksUrlsState(links.map(link => link.url));
 
     },[links])
+
+    useEffect(()=>{console.log(formData)},[formData])
 
     const prevFormDataRef = useRef(); // Track previous formData
 
@@ -192,9 +211,11 @@ const Dashboard = () => {
             const url=URL.createObjectURL(file)
           
             setAvatar(url)
+            setAvatarFormData(file)
         }
     }
 
+       
 
     const handleRemoveSkill=(skill)=>{
         const newSkills=skills.filter(s=>s!==skill) 
@@ -273,7 +294,7 @@ const Dashboard = () => {
           sidebarOpen={sidebarOpen}
         />
 
-        <Notification title= {notification.message} actions= {notification.actions} showNotification={notification.show} type={notification.type}/>
+       {lastPath==='dashboard' && <Notification title= {notification.message} actions= {notification.actions} showNotification={notification.show} type={notification.type}/>}
         <div className='dashboard-page-content'>
 
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
@@ -285,30 +306,31 @@ const Dashboard = () => {
                         <div>
                          { avatar? <img src={avatar}  />: <PersonIcon />}
                         </div>
-                        <button className="edit-icon">
-                            <label htmlFor='edit-avatar'><EditTwoToneIcon /></label>
+                       {lastPath==='dashboard' && <button className="edit-icon">
+                            && <label htmlFor='edit-avatar'><EditTwoToneIcon /></label>
                             <input  onChange={handleAvatarChange} type='file' id='edit-avatar' style={{display: 'none'}} />
                         </button>
+                       }
                     </div>
 
                     <div className='basic-info-form-area' >
                         <div className='basic-info-form-area-row'>
                                 <div>
                                 <label htmlFor='full-name'>Full Name</label>
-                                <input value={fullNameState} onChange={(e)=>{setFullNameState(e.target.value)}} type='text' name='full-name' className="form-control" placeholder='Full Name'/>
+                                <input value={fullNameState} disabled={lastPath!=='dashboard'} onChange={(e)=>{setFullNameState(e.target.value)}} type='text' name='full-name' className="form-control" placeholder='Full Name'/>
                                 </div>
 
 
                                 <div>
                                 <label htmlFor='email'>Email</label>
-                                <input value={emailState} onChange={(e)=>{setEmailState(e.target.value)}} type='text' name='email' className="form-control" placeholder='john.doe@example.com' />
+                                <input value={emailState} disabled={lastPath!=='dashboard'} onChange={(e)=>{setEmailState(e.target.value)}} type='text' name='email' className="form-control" placeholder='john.doe@example.com' />
                                  </div>
                         </div>
 
                         <div className='basic-info-form-area-row'>
                         <div  >
                             <label htmlFor='experience'>Experience</label>
-                                <select value={experienceState}
+                                <select value={experienceState} disabled={lastPath!=='dashboard'}
                                  onChange={(e)=>{
                                    
                                     setExperienceState(e.target.value)
@@ -324,7 +346,7 @@ const Dashboard = () => {
                                 </div>
                                 <div>
                             <label htmlFor='status'>Status</label>
-                                <select value={statusState} onChange={(e)=>{
+                                <select value={statusState} disabled={lastPath!=='dashboard'} onChange={(e)=>{
                                   
                                     setStatusState(e.target.value)}} className='form-control' name='status'>
                                     <option value='1'>Available</option>
@@ -336,14 +358,14 @@ const Dashboard = () => {
                                 </div>
                         </div>
                     <div style={{width:'30%', display:'flex',justifyContent:'space-between'}}>
-                       <button  className={( formData.avatar!==avatar  ||formData.fullName!==fullNameState || formData.email!==emailState || formData.experience!==experienceState || formData.status!==statusState) ? 'btn btn btn-outline-primary btn-sm' : 'hidden'} 
+                       <button  className={( formData.avatar!==avatarFormData  ||formData.fullName!==fullNameState || formData.email!==emailState || formData.experience!==experienceState || formData.status!==statusState) ? 'btn btn btn-outline-primary btn-sm' : 'hidden'} 
                        
-                       onClick={()=>{setAvatar(formData.avatar);setFullNameState(formData.fullName);setEmailState(formData.email);setExperienceState(formData.experience);setStatusState(formData.status)}} >Discard changes</button> 
+                       onClick={()=>{setAvatarFormData(formData.avatar);setFullNameState(formData.fullName);setEmailState(formData.email);setExperienceState(formData.experience);setStatusState(formData.status)}} >Discard changes</button> 
                      
-                     <button   className={( formData.avatar!==avatar  ||formData.fullName!==fullNameState || formData.email!==emailState || formData.experience!==experienceState || formData.status!==statusState) ? 'btn btn-primary btn-sm' : 'hidden'}
+                     <button   className={( formData.avatar!==avatarFormData  ||formData.fullName!==fullNameState || formData.email!==emailState || formData.experience!==experienceState || formData.status!==statusState) ? 'btn btn-primary btn-sm' : 'hidden'}
                         onClick={()=>{
                           
-                            setFormData({...formData,avatar:avatar,fullName:fullNameState,email:emailState,experience:experienceState,status:statusState}); }}
+                            setFormData({...formData,avatar:avatarFormData,fullName:fullNameState,email:emailState,experience:experienceState,status:statusState}); }}
                      >Save</button>
                         
                     </div>
@@ -353,7 +375,7 @@ const Dashboard = () => {
                     <div className='summary-input-area dashboard-card'>
                         <label htmlFor='summary'>Summary</label>
                         
-                        <textarea ref={summaryRef} type='text' name='summary' placeholder='Write a summary about yourself'  onChange={(e)=>{setSummaryState(e.target.value)}}/>
+                        <textarea ref={summaryRef} disabled={lastPath!=='dashboard'} type='text' name='summary' placeholder='Write a summary about yourself'  onChange={(e)=>{setSummaryState(e.target.value)}}/>
                         <div><button className={formData.summary===summaryState ? 'hidden' : ''} onClick={()=>{
                             setFormData({...formData,summary:summaryState})
                             
@@ -366,11 +388,12 @@ const Dashboard = () => {
                             
                             {skills.length >0?
                                 skills.map((skill,index)=>{
-                                return <div key={index}  onClick={()=>{handleRemoveSkill(skill)}} className='skill'>{skill}</div>
+                                return <div key={index}   onClick={()=>  {    lastPath==='dashboard' ?  handleRemoveSkill(skill) : null}}  className='skill'>{skill}</div>
                                 }):
                         <div style={{width:'100%', textAlign:'center'}}>No skills found</div>
                         }
-                        <input
+                        { 
+                        lastPath==='dashboard' && <input
                           id="add-skill-input"
                           className={addSkillInputAppeared ? 'add-skill-input-appeared' : 'add-skill-input-hidden'}
                           placeholder="Add Skill"
@@ -384,7 +407,8 @@ const Dashboard = () => {
                                 e.target.value=''
                             }
                           }}
-                        />    
+                        />
+                        }    
                     </div>
                     </div>
 
@@ -402,12 +426,13 @@ const Dashboard = () => {
                                         <span>{link.name}</span>
                                     </div>
                                     <span>{link.url}</span>
-                                    <div>
+                                    {lastPath==='dashboard' && <div>
                                         <EditTwoToneIcon className='edit-icon' onClick={()=>{
                                             console.log(editLinkFormAppeared)
                                             handleOpenEditLinkForm(index)}}/>
                                         <DeleteTwoToneIcon onClick={()=>handleRemoveLink(link)}/>
                                     </div>
+                                    }
                              </div>
 
                                 <div id='edit-link-form' className={editLinkFormAppeared[index] ? 'add-link-form' : 'hidden'}>
@@ -419,8 +444,7 @@ const Dashboard = () => {
                                     value={editLinksNamesState[index]}
                                      onChange={(e)=>handleNameChange(index,e.target.value)}
                                     />
-                                    
-                                    <input 
+                                    {lastPath==='dashboard' && <input 
                                     className='edit-link-form-input'
                                     ref={el => editLinksUrlsRef.current[index] = el}
                                     style={{width:'100%'}} type='text' 
@@ -428,6 +452,7 @@ const Dashboard = () => {
                                     onChange={(e)=>handleUrlChange(index,e.target.value)}
                                     value={editLinksUrlsState[index]}
                                     />
+                                    }
                                     <CheckTwoToneIcon onClick={()=>{handleSubmitEditLink(index)}}/>
                             </div>
 
@@ -437,7 +462,7 @@ const Dashboard = () => {
                        }):
                        <div>No links found</div>
                        }
-                       <div id='add-link-form' className={addLinkFormAppeared ? 'add-link-form' : 'hidden'}>
+                       {lastPath==='dashboard' && <div id='add-link-form' className={addLinkFormAppeared ? 'add-link-form' : 'hidden'}>
                         <input 
                         ref={linkNameRef}
                          type='text' placeholder='Link Name' />
@@ -446,6 +471,7 @@ const Dashboard = () => {
                         style={{width:'100%'}} type='text' placeholder='Link URL' />
                         <AddTwoToneIcon onClick={handleAddLink}/>
                        </div>
+                       }
 
                             </div>
                            </div>
@@ -453,14 +479,14 @@ const Dashboard = () => {
 
 
                     <div className="resume-area dashboard-card">
-                        <input id='resume-upload' name='resume-upload' type='file' accept='.pdf,.doc,.docx' 
+                        {lastPath==='dashboard' && <input id='resume-upload' name='resume-upload' type='file' accept='.pdf,.doc,.docx' 
                          onChange={(e)=>{
                             
                             setResumeState(e.target.files[0])
                             handleShowSubmitNotification()
-                            }}/>
+                            }}/>}
                         <img src={pdfImage} alt='upload resume' />
-                        <label htmlFor='resume-upload'>{resumeState ? resumeState.name : 'Upload Resume'}</label>
+                        {lastPath==='dashboard' ? <label htmlFor='resume-upload'>{resumeState ? resumeState.name : 'Upload Resume'}</label> : <div>Resume Name</div>}
                         <div> Accepted files: pdf, doc, docx </div>
                     </div>
                </div>

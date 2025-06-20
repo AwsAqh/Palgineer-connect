@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../Componetns/header';
 import Footer from '../Componetns/footer';
 import '../styles/homePage.css';
@@ -7,8 +8,9 @@ import "../styles/register.css"
 import PersonIcon from '@mui/icons-material/Person';
 
 const Register = () => {
+  const navigate=useNavigate()
   const [step, setStep] = useState(1);
-
+  const [avatarShown, setAvatarShown] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,6 +23,9 @@ const Register = () => {
   const [skills, setSkills] = useState([]);
   
   const avatarInputRef = useRef(null);
+
+  useEffect(()=>{setFormData({...formData,skills:skills})},[skills])
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,12 +41,7 @@ const Register = () => {
     setStep(step - 1);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData)
-    // Submit formData to backend here
-    alert('Registration submitted!');
-  };
+  
 
   const handleSkillKeyDown = (e) => {
     if ((e.key === 'Enter' || e.key === ',') && e.target.value) {
@@ -50,6 +50,7 @@ const Register = () => {
       if (value && !skills.includes(value)) {
         setSkills([...skills, value]);
       }
+      
       e.target.value = '';
     }
   };
@@ -57,6 +58,57 @@ const Register = () => {
   const handleRemoveSkill = (removeSkill) => {
     setSkills(skills.filter(skill => skill !== removeSkill));
   };
+
+const handleAvatarChange = (e) => {
+
+    const url =URL.createObjectURL(e.target.files[0])
+    setAvatarShown(url)
+    setFormData({...formData,avatar:e.target.files[0]})
+
+}
+
+
+const handleSubmit = async(e) => {
+    e.preventDefault();
+    console.log(formData)
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('password', formData.password);
+    formDataToSend.append('skills', formData.skills);
+    formDataToSend.append('experience', formData.experience);
+    formDataToSend.append('status', formData.status);
+    formDataToSend.append('avatar', formData.avatar);
+    formDataToSend.append('resume', formData.resume);
+    
+    try{
+    const response= await fetch("http://localhost:7050/api/auth/register",{
+        method:"POST",
+        body:formDataToSend
+    })
+
+    if(response.ok){
+        const data=await response.json()
+        localStorage.setItem("token", JSON.stringify({token:data.token, expiresIn: "1h"}));
+        localStorage.setItem("user",JSON.stringify(data.user))
+        navigate("/dashboard")
+    }
+
+    else{
+        const errorData=await response.json()
+        console.log(errorData)
+    }
+
+    }
+    
+    catch(error){
+        alert("Something went wrong")
+        console.log(error)
+    }
+
+  };
+
+
 
   return (
     <div className='full-page-container'>
@@ -160,19 +212,28 @@ const Register = () => {
                 <div className='register-step3-fields'>
                   <textarea
                     className='register-textarea'
-                    name='about'
-                    value={formData.about || ''}
+                    name='summary'
+                    value={formData.summary || ''}
                     onChange={handleChange}
                     placeholder='e.g. I am a software engineer with 3 years of experience in React, Node.js, and Python. I am passionate about building scalable web applications...'
                     rows={6}
                     required
                   />
-                  <button className='btn btn-primary register-btn' type='button'>
-                    Upload CV
-                  </button>
+                  <input 
+                    id="resume-upload"
+                    onChange={(e)=>{setFormData({...formData,resume:e.target.files[0]})}} 
+                    type='file' 
+                    name='resume' 
+                    accept='.pdf,.doc,.docx' 
+                    style={{ display: 'none' }} 
+                  />
+                  <label htmlFor='resume-upload' className='register-step3-upload-btn' >
+                    {formData.resume ? formData.resume.name : "Upload CV"}
+                  </label>
+
                   <div style={{ display: 'flex', width: '100%', gap: '1rem', marginTop: '1rem' }}>
                     <button className='btn btn-secondary register-btn' style={{ flex: 1 }} onClick={handleBack}>Back</button>
-                    <button className='btn btn-primary register-btn' style={{ flex: 1 }} type='submit'>Register</button>
+                    <button className='btn btn-primary register-btn' style={{ flex: 1 }} type='submit'>Continue</button>
                   </div>
                 </div>
               </div>
@@ -190,31 +251,29 @@ const Register = () => {
               <div className='register-step4-row'>
                 <div className='register-step4-avatar'>
                   <span className='register-step4-avatar-icon'>
-                    <PersonIcon style={{ fontSize: 40 }} />
+                   {avatarShown ? <img src={avatarShown} alt="Avatar" /> : <PersonIcon style={{ fontSize: 40 }} />}
                   </span>
                 </div>
                 <label className='register-step4-label'>Upload your profile picture</label>
                 <input
-                ref={avatarInputRef}
+                  ref={avatarInputRef}
                   type="file"
-                  id="file"
-                  name="file"
+                  id="avatar-upload"
+                  name="avatar"
                   className="register-step4-file"
                   accept=".jpg,.jpeg,.png"
                   style={{ display: 'none' }}
-                  onChange={(e)=>{console.log("file",avatarInputRef.current.files[0]) 
-                        setFormData({...formData,avatar:avatarInputRef.current.files[0]})
-                   }}
+                  onChange={handleAvatarChange}
                 />
-                <label htmlFor="file" className="register-step4-upload-btn">
-                 {formData.avatar ? formData.avatar.name : "Choose File"}
+                <label htmlFor="avatar-upload" className="register-step4-upload-btn">
+                  {formData.avatar ? formData.avatar.name : "Choose File"}
                 </label>
                 <div className="register-step4-btns">
                   <button className='btn btn-secondary register-btn' type="button" onClick={handleBack}>Back</button>
                   <button
                     className='btn btn-primary register-btn'
                     type="submit"
-                  
+                   onClick={handleSubmit}
                   >
                     {  formData.avatar
                       ? "Submit"    
@@ -227,6 +286,9 @@ const Register = () => {
               </div>
             </form>
           )}
+
+
+
         </div>
         <div className="register-header-col">
           <div className="register-title">Create Your SWE Profile</div>
