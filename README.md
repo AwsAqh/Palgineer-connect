@@ -2,6 +2,9 @@
 
 Palgineer is a modern platform designed to help tech companies in Palestine discover and connect with talented software engineers. Unlike traditional job boards, Palgineer empowers engineers to showcase their skills, experience, and availability, while companies search and filter for the ideal candidates. For software engineers, this means they never miss out on internship or employment opportunities simply because a company closed an application before they even knew about it.
 
+
+#Note: to run this app, use the backend service from palgineer-backend repo (https://github.com/awsaqh/palgineer-backend) and follow readme file.
+
 ## Features
 - Engineer-centric profiles: showcase skills, experience, status (available, hired, etc.) and CV.
 - Company search and filtering for engineers
