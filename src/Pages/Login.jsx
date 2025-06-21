@@ -24,6 +24,7 @@ const LoginPage = () => {
                 console.log(data.expires)
                 localStorage.setItem("token", JSON.stringify({token:data.token, expiresIn:"24h"}));
                 localStorage.setItem("user", JSON.stringify(data.engineer));
+                console.log(localStorage.getItem("user"))
             navigate("/dashboard");         
              }
              else{
