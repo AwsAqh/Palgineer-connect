@@ -17,8 +17,11 @@ const Register = () => {
     password: '',
     skills: '',
     experience: '',
+    summary: '',
+    role: '',
     status: '',
     avatar: null,
+    resume: null,
   });
   const [skills, setSkills] = useState([]);
   
@@ -75,9 +78,11 @@ const handleSubmit = async(e) => {
     formDataToSend.append('name', formData.name);
     formDataToSend.append('email', formData.email);
     formDataToSend.append('password', formData.password);
-    formDataToSend.append('skills', formData.skills);
+    formDataToSend.append('summary', formData.summary);
+    formData.skills.forEach(skill=> formDataToSend.append('skills',skill))
     formDataToSend.append('experience', formData.experience);
     formDataToSend.append('status', formData.status);
+    formDataToSend.append('role', formData.role);
     formDataToSend.append('avatar', formData.avatar);
     formDataToSend.append('resume', formData.resume);
     
@@ -86,11 +91,13 @@ const handleSubmit = async(e) => {
         method:"POST",
         body:formDataToSend
     })
-
+    const data=await response.json()
     if(response.ok){
-        const data=await response.json()
-        localStorage.setItem("token", JSON.stringify({token:data.token, expiresIn: "1h"}));
-        localStorage.setItem("user",JSON.stringify(data.user))
+       
+        localStorage.setItem("token", JSON.stringify({token:data.token, expiresIn: "24h"}));
+        localStorage.setItem("user",JSON.stringify(data.engineer))
+        console.log(localStorage.getItem("user"))
+        console.log("data in register",data)
         navigate("/dashboard")
     }
 
@@ -178,12 +185,26 @@ const handleSubmit = async(e) => {
                 </div>
               </div>
               <div className='form-group'>
-                <label htmlFor='experience'>Experience</label>
-                <input type='text' id='experience' name='experience' value={formData.experience} onChange={handleChange} placeholder='e.g. 3 years, Intern, etc.' required />
+                <label htmlFor='role'>Role</label>
+                <select id='role' name='role' value={formData.role} onChange={handleChange} required>
+                  <option value=''>Select role</option>
+                  <option value='Frontend Engineer'>Frontend Engineer</option>
+                  <option value='Backend Engineer'>Backend Engineer</option>
+                  <option value='Full Stack Engineer'>Full Stack Engineer</option>
+                  <option value='DevOps Engineer'>DevOps Engineer</option>
+                  <option value='Mobile Engineer'>Mobile Engineer</option>
+                  <option value='Data Engineer'>Data Engineer</option>
+                  <option value="QA Engineer">QA Engineer</option>
+                  <option value='Other'>Other</option>
+                </select>
+              </div>
+              <div className='form-group'>
+                <label htmlFor='experience'>Experience (in years)</label>
+                <input type='text' id='experience' name='experience'  onChange={handleChange} placeholder='e.g. 3.' required />
               </div>
               <div className='form-group'>
                 <label htmlFor='status'>Status</label>
-                <select id='status' name='status' value={formData.status} onChange={handleChange} required>
+                <select id='status' name='status' onChange={handleChange} required>
                   <option value=''>Select status</option>
                   <option value='available'>Available to Hire</option>
                   <option value='hired'>Hired</option>

@@ -19,24 +19,26 @@ const Dashboard = () => {
     const [user,setUser] = useState(JSON.parse(localStorage.getItem("user")))
     const [token,setToken] = useState(JSON.parse(localStorage.getItem("token")))
     const lastPath = useLocation().pathname.split('/').pop();
-    const [avatar,setAvatar] = useState(user.avatar);
+    const [avatar,setAvatar] = useState(null);
     const [avatarFormData,setAvatarFormData] = useState(user.avatar)
     const [skills,setSkills] = useState(user.skills);
     const [addSkillInputAppeared,setAddSkillInputAppeared] = useState(false);
     const[addLinkFormAppeared,setAddLinkFormAppeared] = useState(false);
-  
+    const [avatarIsChanged,setAvatarIsChanged] = useState(false);
     const [links,setLinks] = useState(user.links || {})
     const [linksMap,setLinksMap] = useState(null)
     const[editLinkFormAppeared,setEditLinkFormAppeared] = useState([]);
     const [fullNameState,setFullNameState] = useState(user.name);
     const [emailState,setEmailState] = useState(user.email);
-    const [experienceState,setExperienceState] = useState(user.experience);
+    const [experienceState,setExperienceState] = useState(user.experience); 
     const [statusState,setStatusState] = useState(user.status);
+    const [roleState,setRoleState] = useState(user.role);
     const [resumeState,setResumeState] = useState(user.resume);
+    const [resumeStateName,setResumeStateName] = useState(user.resume.split('/').pop());  
     const [showNotification,setShowNotification] = useState(false);
 
     const [linksArray, setLinksArray] = useState([]) // Array for display
-
+    const avatarRef = useRef(null);
     const[notification,setNotification] = useState({
         message:'',
         type:'',
@@ -61,13 +63,14 @@ const Dashboard = () => {
         email: user.email,
         experience: user.experience,
         status: user.status,
+        role: user.role,
         summary: user.summary,
         skills: user.skills,
         links: user.links || {}, // Keep as object
         resume: user.resume
     });
 
-    // Fixed: Better useEffect for managing links arrays
+    // Fixed: Better useEffect for managing links arrays,initial links effect
     useEffect(() => {
         if (!links || Object.keys(links).length === 0) {
             setLinksArray([]);
@@ -94,6 +97,8 @@ const Dashboard = () => {
         
     }, [links]);
 
+
+    //secure page with token validation
     useEffect(()=>{
         const now=new Date()
         const tokenExpiry=new Date(token.expiresIn)
@@ -103,11 +108,25 @@ const Dashboard = () => {
         }
     },[])
 
+
+    //set mounted to true
     useEffect(()=>{
+        
         const timeOutId=setTimeout(()=>{IsMounted.current=true},0)
+      
         return ()=>clearTimeout(timeOutId)
     },[])
 
+
+
+    //set avatar to user.avatar , for submitted avatar, it will be updated in the formData and in the UI
+    useEffect(()=>{
+        setAvatar(user.avatar)
+    },[user.avatar])
+
+    useEffect(()=>{setResumeState(user.resume); },[user.resume])
+    
+    //submit changes to the server , call handleSubmitChanges
     useEffect(()=>{
         if(IsMounted.current){
           handleSubmitChanges()
@@ -116,11 +135,17 @@ const Dashboard = () => {
 
     const cancelChanges=()=>{
          setResumeState(formData.resume);
+      
         setLinks(formData.links); // Reset to object
         setSkills(formData.skills);
         setAvatar(formData.avatar);
+        setResumeStateName(formData.resume.split('/').pop());
+        setResumeState(formData.resume);
         setNotification({ ...notification, show: false });}
     
+
+
+
     const handleSubmitChanges = async () => {
         const formDataToSubmit = new FormData();
         
@@ -130,6 +155,7 @@ const Dashboard = () => {
         formDataToSubmit.append('email', formData.email);
         formDataToSubmit.append('experience', formData.experience);
         formDataToSubmit.append('status', formData.status);
+        formDataToSubmit.append('role', formData.role);
         formDataToSubmit.append('summary', formData.summary);
         formData.skills.forEach(skill => {
             formDataToSubmit.append('skills', skill);
@@ -153,7 +179,7 @@ const Dashboard = () => {
                 body: formDataToSubmit
             });
             
-            const data = await response; // Parse JSON response
+            const data = await response.json(); // Parse JSON response
             
             if (!response.ok) {
                 setNotification({
@@ -164,20 +190,23 @@ const Dashboard = () => {
                 });
                 throw new Error("Failed to submit changes");
             }
-            
+            console.log("new avatar in submit:",data.updated.avatar)
             // Update local storage with new data
             const updatedUser = {
                 ...user,
-                avatar: formData.avatar,
-                name: formData.fullName,
-                email: formData.email,
-                experience: formData.experience,
-                status: formData.status,
-                summary: formData.summary,
-                skills: formData.skills,
-                links: formData.links,
-                resume: formData.resume
+                avatar: data.updated.avatar,
+                name: data.updated.name,
+                email: data.updated.email,
+                experience: data.updated.experience,
+                status: data.updated.status,
+                role: data.updated.role,
+                summary: data.updated.summary,
+                skills: data.updated.skills,
+                links: data.updated.links,
+                resume: data.updated.resume
             };
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            setUser(updatedUser)
             // localStorage.setItem("user", JSON.stringify(updatedUser));
             // setUser(updatedUser);
             
@@ -187,7 +216,7 @@ const Dashboard = () => {
                 show: true,
                 actions: []
             });
-            
+            setAvatarIsChanged(false)
         } catch (err) {
             console.error("Error submitting changes:", err);
             setNotification({
@@ -198,7 +227,11 @@ const Dashboard = () => {
             });
         }
     };
+
+
+
     
+    //handle show submit notification after changes are made
     useEffect(() => {
         if (IsMounted.current) {
             const hasChanges = JSON.stringify(formData.skills) !== JSON.stringify(skills) ||
@@ -234,6 +267,7 @@ const Dashboard = () => {
         }
     }, [links, skills, resumeState]);
 
+    //add clicks listner on mount
     useEffect(() => {
         const handleClick = (e) => {
             if(e.target.className==='tech-stack-container' || e.target.id==='add-skill-input')  setAddSkillInputAppeared(true) 
@@ -259,8 +293,9 @@ const Dashboard = () => {
     }, [linksArray.length]); // Fixed: add dependency
 
     const handleAvatarChange=(e)=>{
+        setAvatarIsChanged(true)
         let file = e.target.files[0];
-        console.log(file)
+       
         if(file){
             const url=URL.createObjectURL(file)
             setAvatar(url)
@@ -357,9 +392,7 @@ const Dashboard = () => {
         console.log("Submit notification should be shown");
     };
 
-    useEffect(()=>{
-        console.log(skills)
-    },[skills])
+   
 
     return (
         <div className='dashboard-page-container'>
@@ -378,11 +411,11 @@ const Dashboard = () => {
 
                         <div className='dash-user-info-avatar'>
                             <div>
-                             { avatar? <img src={avatar}  />: <PersonIcon />}
+                             { avatar? <img src={ avatarIsChanged ? avatar:`http://localhost:7050${avatar}`   }  />: <PersonIcon />}
                             </div>
                            {lastPath==='dashboard' && <button className="edit-icon">
                                 <label htmlFor='edit-avatar'><EditTwoToneIcon /></label>
-                                <input  onChange={handleAvatarChange} type='file' id='edit-avatar' style={{display: 'none'}} />
+                                <input ref={avatarRef} onTouchCancel={()=>{setAvatarIsChanged(false)}}  onChange={handleAvatarChange} type='file' id='edit-avatar' style={{display: 'none'}} />
                             </button>
                            }
                         </div>
@@ -410,11 +443,11 @@ const Dashboard = () => {
                                         console.log(e.target.value)
                                         }} 
                                         className='form-control' name='experience'>
-                                        <option value='1'>Beginner</option>
-                                        <option value='2'>Intermediate</option>
-                                        <option value='3'>Advanced</option>
-                                        <option value='4'>Expert</option>
-                                        <option value='5'>Senior</option>
+                                        <option value='Beginner'>Beginner</option>
+                                        <option value='Intermediate'>Intermediate</option>
+                                        <option value='Advanced'>Advanced</option>
+                                        <option value='Expert'>Expert</option>
+                                        <option value='Senior'>Senior</option>
                                     </select>
                                     </div>
                                     <div>
@@ -422,24 +455,61 @@ const Dashboard = () => {
                                     <select value={statusState} disabled={lastPath!=='dashboard'} onChange={(e)=>{
                                       
                                         setStatusState(e.target.value)}} className='form-control' name='status'>
-                                        <option value='1'>Available</option>
-                                        <option value='2'>Hired</option>
-                                        <option value='3'>On Leave</option>
-                                        <option value='4'>Intern</option>
-                                        <option value='5'>Senior</option>
+                                        <option value='Available'>Available</option>
+                                        <option value='Hired'>Hired</option>
+                                        <option value='On Leave'>On Leave</option>
+                                        <option value='Intern'>Intern</option>
+                                        <option value='Senior'>Senior</option>
                                     </select>
+                                    </div>
+                                    <div >
+                                    <label htmlFor='role'>Role</label>
+                                    <select value={roleState} disabled={lastPath!=='dashboard'} onChange={(e)=>{
+                                        setRoleState(e.target.value)
+                                        
+                                        }} className='form-control' name='role'>
+                                        <option value='Frontend Engineer'>Frontend Engineer</option>
+                                        <option value='Backend Engineer'>Backend Engineer</option>
+                                        <option value='Full Stack Engineer'>Full Stack Engineer</option>
+                                        <option value='DevOps Engineer'>DevOps Engineer</option>
+                                        <option value='QA Engineer'>QA Engineer</option>
+                                        <option value='Designer'>Designer</option>
+                                        <option value='Data Engineer'>Data Engineer</option>
+                                        <option value='Mobile Engineer'>Mobile Engineer</option>
+                                    </select>
+
                                     </div>
                             </div>
                         <div style={{width:'30%', display:'flex',justifyContent:'space-between'}}>
-                           <button  className={( formData.avatar!==avatarFormData  ||formData.fullName!==fullNameState || formData.email!==emailState || formData.experience!==experienceState || formData.status!==statusState) ? 'btn btn btn-outline-primary btn-sm' : 'hidden'} 
+
+                           <button  className={( formData.avatar!==avatarFormData  ||
+                           formData.fullName!==fullNameState ||
+                            formData.email!==emailState ||
+                             formData.experience!==experienceState ||
+                              formData.status!==statusState ||
+                               formData.role!==roleState) ? 'btn btn btn-outline-primary btn-sm' : 'hidden'} 
                            
-                           onClick={()=>{setAvatarFormData(formData.avatar);setFullNameState(formData.fullName);setEmailState(formData.email);setExperienceState(formData.experience);setStatusState(formData.status)}} >Discard changes</button> 
+                           onClick={()=>  { if(avatarRef.current){avatarRef.current.value=''}; 
+                           setAvatarFormData(formData.avatar);
+                           setFullNameState(formData.fullName);
+                           setEmailState(formData.email);
+                           setExperienceState(formData.experience);
+                           setStatusState(formData.status);
+                           setRoleState(formData.role);
+                           setAvatarIsChanged(false) ;setAvatar(formData.avatar)}} >Discard changes</button> 
                          
 
-                        {lastPath==='dashboard' && <button   className={( formData.avatar!==avatarFormData  ||formData.fullName!==fullNameState || formData.email!==emailState || formData.experience!==experienceState || formData.status!==statusState) ? 'btn btn-primary btn-sm' : 'hidden'}
+
+                        {lastPath==='dashboard' && <button   className={( formData.avatar!==avatarFormData  ||
+
+                        formData.fullName!==fullNameState ||
+                         formData.email!==emailState ||
+                          formData.experience!==experienceState ||
+                           formData.status!==statusState ||
+                            formData.role!==roleState) ? 'btn btn-primary btn-sm' : 'hidden'}
                             onClick={()=>{
                               
-                                setFormData({...formData,avatar:avatarFormData,fullName:fullNameState,email:emailState,experience:experienceState,status:statusState}); 
+                                setFormData({...formData,avatar:avatarFormData,fullName:fullNameState,email:emailState,experience:experienceState,status:statusState,role:roleState}); 
                           
                                 }}
                          >Save</button>
@@ -456,11 +526,11 @@ const Dashboard = () => {
                                 disabled={lastPath!=='dashboard'} 
                                 type='text' 
                                 name='summary' 
-                                value={summaryState || ''}
+                                value={summaryState}
                                 placeholder='Write a summary about yourself'  
                                 onChange={(e)=>{setSummaryState(e.target.value)}}
                             />
-                            <div><button className={((formData.summary || '') === (summaryState || '')) ? 'hidden' : ''} onClick={()=>{
+                            <div><button className={formData.summary===summaryState ? 'hidden' : ''} onClick={()=>{
                                 setFormData({...formData,summary:summaryState})
                                 
                                 }}>Save</button></div>
@@ -563,13 +633,19 @@ const Dashboard = () => {
 
                         <div className="resume-area dashboard-card">
                             {lastPath==='dashboard' && <input id='resume-upload' name='resume-upload' type='file' accept='.pdf,.doc,.docx' 
+                            onTouchCancel={()=>{setResumeStateName(user.resume);setNotification({...notification,show:false})}}
                              onChange={(e)=>{
                                 
                                 setResumeState(e.target.files[0])
+                                setResumeStateName(e.target.files[0].name)
                                 handleShowSubmitNotification()
                                 }}/>}
                             <img src={pdfImage} alt='upload resume' />
-                            {lastPath==='dashboard' ? <label htmlFor='resume-upload'>{resumeState ? resumeState.name : 'Upload Resume'}</label> : <div>Resume Name</div>}
+                            {resumeStateName && <div><a onClick={()=>{
+                                console.log(resumeState)
+                                window.open(`http://localhost:7050${resumeState}`, '_blank');
+                            }} href={`http://localhost:7050${resumeState}`} target='_blank' rel='noreferrer'>{resumeStateName}</a></div>}
+                            {lastPath==='dashboard' ? <label htmlFor='resume-upload'>Change Resume</label> : <div>Resume Name</div>}
                             <div> Accepted files: pdf, doc, docx </div>
                         </div>
                    </div>
