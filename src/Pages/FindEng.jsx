@@ -15,9 +15,10 @@ const FindEng = () => {
         show:false,
         type:""
     })
+    
 
     const levels={"Junior":1,"Mid-level":2,"Senior":3}
-
+    const [user,setUser]=useState(JSON.parse(localStorage.getItem("user")))
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -29,9 +30,15 @@ const FindEng = () => {
     const [filters, setFilters] = useState({
         experience: '',
         status: '',
-        role: ''
+        role: '',
+        skills:[]
     });
 
+    useEffect(()=>{
+
+
+    },[])
+        const localUser=JSON.parse(localStorage.getItem("user"))
     useEffect(()=>{
 
         const fetchAllEngineers=async()=>{
@@ -69,14 +76,25 @@ const FindEng = () => {
        
         return fetchedEngineers.filter(engineer => {
             
-            const matchesSearch = engineer.name && (engineer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                engineer.role&& (engineer.role.toLowerCase().includes(searchTerm.toLowerCase())));
+            const matchesSearch = engineer.name && (engineer.name.toLowerCase().includes(searchTerm.toLowerCase()) || engineer.role.toLowerCase().includes(searchTerm.toLowerCase()))
             const matchesExperience = !filters.experience || levels[engineer.experience] >= levels[filters.experience];
             const matchesStatus = !filters.status || engineer.status === filters.status;
-            
+            const matchesRole = !filters.role || engineer.role === filters.role;
+            const matchesSkill = searchTerm.length === 0
+                ? true
+                : engineer.skills?.some(skillStr => {
+                 
+                    const skillWords = skillStr
+                    .toLowerCase()
+                    .split(/\s+/);
+
+                    // check if any of your search tokens is exactly one of these words
+                    return searchTerm.toLowerCase().split(" ").some(term => skillWords.includes(term));
+                });
+
            
             
-            return matchesSearch && matchesExperience && matchesStatus;
+            return ((matchesSearch||matchesSkill) && matchesExperience && matchesStatus && matchesRole );
         });
     }, [searchTerm, filters, fetchedEngineers]);
 
@@ -112,6 +130,21 @@ useEffect(()=>{
      
         // Search functionality is handled by the useMemo above
     };
+
+    const handleNavigateClick=(engineer)=>{
+
+        
+        
+       
+        if(!user || user._id!==engineer._id){
+            navigate(`/profile/${engineer._id}`)
+        }
+        else{
+            navigate(`/dashboard`)
+        }
+        
+
+    }
     
     return (
         <div className='find-page-container'>
@@ -162,10 +195,10 @@ useEffect(()=>{
                                 </select>
 
                                 <select 
-                                    value={filters.location}
-                                    onChange={(e) => handleFilterChange('location', e.target.value)}
-                                >
-                                    <option value=''>Role</option>
+                                    value={filters.role}
+                                        onChange={(e) => handleFilterChange('role', e.target.value)}
+                                    >
+                                    <option value=''>All Roles</option>
                                     <option value='Frontend Engineer'>Frontend Engineer</option>
                                     <option value='Backend Engineer'>Backend Engineer</option>
                                     <option value='Full Stack Engineer'>Full Stack Engineer</option>
@@ -203,14 +236,18 @@ useEffect(()=>{
                                                     <PersonIcon/>
                                                 </div>
                                                 <div>
-                                                    <div className='user-name' onClick={() => navigate(`/profile/${engineer._id}`)}>{engineer.name}</div>
+                                                    <div className='user-name' onClick={() =>{
+                                                    
+                                                     handleNavigateClick(engineer)
+                                                    }
+                                                     }>{engineer.name} {engineer._id===user?._id && <span style={{color:"green"}}> (Me)</span>}</div>
                                                     <div className='user-extra'>{engineer.role}</div>
                                                 </div>
                                             </div>
                                             <div className='col experience'>{engineer.experience}</div>
                                             <div className={`col status ${engineer.status}`}>  {engineer.status}</div>
                                             <div className='col actions'>
-                                                <ArrowForwardIosTwoToneIcon onClick={() =>{   navigate(`/profile/${engineer._id}`)}}/>
+                                                <ArrowForwardIosTwoToneIcon onClick={() =>{   handleNavigateClick(engineer)}}/>
                                             </div>
                                         </div>
                                     ))

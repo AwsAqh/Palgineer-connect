@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import Header from '../Componetns/header';
 import Footer from '../Componetns/footer';
 import Sidebar from '../Componetns/sideBar';
@@ -16,29 +16,30 @@ import Notification from '../Componetns/notification';
 import {SocialIcon} from 'react-social-icons';
 
 const Dashboard = () => {
-    const [user,setUser] = useState(JSON.parse(localStorage.getItem("user")))
-    const [token,setToken] = useState(JSON.parse(localStorage.getItem("token")))
+    const navigate=useNavigate()
+    const [user,setUser] = useState(JSON.parse(localStorage.getItem("user")) || null)
+    const [token,setToken] = useState(JSON.parse(localStorage.getItem("token")) || null)
     const lastPath = useLocation().pathname.split('/').pop();
     const {id} = useParams()
     const [noEngineerFound,setNoEngineerFound] = useState(false)
     const [engineerById,setEngineerById] = useState(null)
     const [errorGetEngineerById,setErrorGetEngineerById] = useState({})
     const [avatar,setAvatar] = useState(null);
-    const [avatarFormData,setAvatarFormData] = useState(user.avatar)
-    const [skills,setSkills] = useState(user.skills);
+    const [avatarFormData,setAvatarFormData] = useState(null)
+    const [skills,setSkills] = useState(null);
     const [addSkillInputAppeared,setAddSkillInputAppeared] = useState(false);
     const[addLinkFormAppeared,setAddLinkFormAppeared] = useState(false);
     const [avatarIsChanged,setAvatarIsChanged] = useState(false);
-    const [links,setLinks] = useState(user.links || {})
+    const [links,setLinks] = useState(null);
     const [linksMap,setLinksMap] = useState(null)
     const[editLinkFormAppeared,setEditLinkFormAppeared] = useState([]);
-    const [fullNameState,setFullNameState] = useState(user.name);
-    const [emailState,setEmailState] = useState(user.email);
-    const [experienceState,setExperienceState] = useState(user.experience); 
-    const [statusState,setStatusState] = useState(user.status);
-    const [roleState,setRoleState] = useState(user.role);
-    const [resumeState,setResumeState] = useState(user.resume);
-    const [resumeStateName,setResumeStateName] = useState(user.resume.split('/').pop());  
+    const [fullNameState,setFullNameState] = useState(null);
+    const [emailState,setEmailState] = useState(null);
+    const [experienceState,setExperienceState] = useState(null); 
+    const [statusState,setStatusState] = useState(null);
+    const [roleState,setRoleState] = useState(null);
+    const [resumeState,setResumeState] = useState(null);
+    const [resumeStateName,setResumeStateName] = useState(null);  
     const [showNotification,setShowNotification] = useState(false);
 
     const [linksArray, setLinksArray] = useState([]) // Array for display
@@ -51,7 +52,7 @@ const Dashboard = () => {
     });
 
     const summaryRef = useRef(null);
-    const [summaryState,setSummaryState] = useState(user.summary || '');
+    const [summaryState,setSummaryState] = useState(null);
     const linkNameRef = useRef(null);
     const linkUrlRef = useRef(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,25 +62,50 @@ const Dashboard = () => {
     const [editLinksUrlsState, setEditLinksUrlsState] = useState([]);
 
     const IsMounted=useRef(false)
+
     const [formData, setFormData] = useState(
         ()=>{
-            if(lastPath==='dashboard'){
+
+           if(lastPath==='dashboard'){  
                 return {
-        avatar: user.avatar,
-        fullName: user.name,
-        email: user.email,
-        experience: user.experience,
-        status: user.status,
-        role: user.role,
-        summary: user.summary,
-        skills: user.skills,
-        links: user.links || {}, // Keep as object
-        resume: user.resume
+        avatar: user?.avatar,
+        fullName: user?.name,
+        email: user?.email ,
+        experience: user?.experience,
+        status: user?.status ,
+        role: user?.role ,
+        summary: user?.summary ,
+        skills: user?.skills ,
+        links: user?.links ,
+        resume: user?.resume 
                 }
-            }
+           }
+          
         }
     );
+    
 
+    useEffect(()=>{
+        if(lastPath==='dashboard'){
+            localStorage.setItem("user",JSON.stringify(user))
+        }
+    },[])
+        
+    useEffect(()=>{
+        if(lastPath==='dashboard'){
+        setAvatarFormData(user&&user.avatar)
+        setSkills(user&&user.skills)
+        setLinks(user&&user.links || {})
+        setResumeState(user&&user.resume)
+        setResumeStateName(user&&user.resume.split('/').pop())
+        setFullNameState(user&&user.name)
+        setEmailState(user&&user.email)
+        setExperienceState(user&&user.experience)
+        setStatusState(user&&user.status)
+        setRoleState(user&&user.role)
+        setSummaryState(user&&user.summary ||"")
+        }
+    },[user])
 
     //Fetch engineer by id
     useEffect(()=>{
@@ -138,13 +164,16 @@ const Dashboard = () => {
 
     //secure page with token validation
     useEffect(()=>{
-        if(lastPath==='dashboard'){
+        if(lastPath==='dashboard' && token && user){
         const now=new Date()
         const tokenExpiry=new Date(token.expiresIn)
         if (now>tokenExpiry) {
           localStorage.removeItem("token")
           navigate("/login")
         }
+    }
+    if((!token || !user) && lastPath==='dashboard'){
+        navigate("/login")
     }
     },[])
 
@@ -162,15 +191,15 @@ const Dashboard = () => {
     //set avatar to user.avatar , for submitted avatar, it will be updated in the formData and in the UI
     useEffect(()=>{
         if(lastPath==='dashboard'){
-        setAvatar(user.avatar)
+        setAvatar(user&&user.avatar)
     }
-    },[user.avatar])
+    },[user&&user.avatar])
 
     useEffect(()=>{
         if(lastPath==='dashboard'){
-        setResumeState(user.resume); 
+        setResumeState(user&&user.resume); 
     }
-    },[user.resume])
+    },[user&&user.resume])
     
     //submit changes to the server , call handleSubmitChanges
     useEffect(()=>{
@@ -217,7 +246,8 @@ const Dashboard = () => {
        
         
         try {
-            const response = await fetch(`http://localhost:7050/api/crud/${user.id}`, {
+            console.log("user id in submit:",user._id)
+            const response = await fetch(`http://localhost:7050/api/crud/${user._id}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `Bearer ${token.token}`
@@ -551,13 +581,13 @@ const Dashboard = () => {
                          
 
 
-                        {lastPath==='dashboard' && <button   className={( formData.avatar!==avatarFormData  ||
+                        {lastPath==='dashboard' && <button   className={( formData&&( formData.avatar!==avatarFormData  ||
 
                         formData.fullName!==fullNameState ||
                          formData.email!==emailState ||
                           formData.experience!==experienceState ||
                            formData.status!==statusState ||
-                            formData.role!==roleState) ? 'btn btn-primary btn-sm' : 'hidden'}
+                            formData.role!==roleState) ? 'btn btn-primary btn-sm' : 'hidden')}   
                             onClick={()=>{
                               
                                 setFormData({...formData,avatar:avatarFormData,fullName:fullNameState,email:emailState,experience:experienceState,status:statusState,role:roleState}); 
@@ -592,7 +622,7 @@ const Dashboard = () => {
                         Tech stack
                         <div className='tech-stack-container'>
                                 
-                                {lastPath==="dashboard"? ( skills.length >0?
+                                {lastPath==="dashboard"? ( skills&&skills.length >0?
                                     skills.map((skill,index)=>{
                                     return <div key={index}   onClick={()=>  {    lastPath==='dashboard' ?  handleRemoveSkill(skill) : null}}  className='skill'>{skill}</div>
                                     }):<div style={{width:'100%', textAlign:'center'}}>No skills found</div>)
