@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import "../Styles/find_eng.css"
 import Header from '../Componetns/header'
@@ -6,46 +6,98 @@ import Sidebar from '../Componetns/sideBar'
 import Footer from '../Componetns/footer'
 import PersonIcon from '@mui/icons-material/Person';
 import ArrowForwardIosTwoToneIcon from '@mui/icons-material/ArrowForwardIosTwoTone';
-
+import Notification from '../Componetns/notification'
 const FindEng = () => {
     const navigate = useNavigate()
+    const [notification,setNotification]=useState({
+        message:"",
+        actions:[],
+        show:false,
+        type:""
+    })
+
+    const levels={"Junior":1,"Mid-level":2,"Senior":3}
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
+    const[fetchedEngineers,setFetchedEngineers]=useState([{}])
+    const [filteredEngineers,setFilteredEngineers]=useState([{}])
+    const [totalPages,setTotalPages]=useState( null)
+    const [startIndex,setStartIndex]=useState( null)
+    const [currentEngineers,setCurrentEngineers]=useState( null)
     const [filters, setFilters] = useState({
         experience: '',
         status: '',
-        location: ''
+        role: ''
     });
+
+    useEffect(()=>{
+
+        const fetchAllEngineers=async()=>{
+            try{
+                const response=await fetch("http://localhost:7050/api/crud",{method :"GET"})
+               
+                const data=await response.json()
+                console.log("fetch :0",data)
+                if(!response.ok){
+                    setNotification({
+                        message:"Failed to fetch engineers",
+                        type:"red-background",
+                        show:true,
+                        actions:[]
+                    })
+                }
+                else{
+                    setFetchedEngineers(data)
+                    
+
+
+                }
+
+            }
+            catch(err){
+                console.log(err)
+            }
+        }
+        fetchAllEngineers()
+
+
+
+    },[])
+    const filteredEngineersMemo = useMemo(() => {
+       
+        return fetchedEngineers.filter(engineer => {
+            
+            const matchesSearch = engineer.name && (engineer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                engineer.role&& (engineer.role.toLowerCase().includes(searchTerm.toLowerCase())));
+            const matchesExperience = !filters.experience || levels[engineer.experience] >= levels[filters.experience];
+            const matchesStatus = !filters.status || engineer.status === filters.status;
+            
+           
+            
+            return matchesSearch && matchesExperience && matchesStatus;
+        });
+    }, [searchTerm, filters, fetchedEngineers]);
+
+    useEffect(()=>{
+      
     
-    // Mock data - replace with actual API call
-    const mockEngineers = Array.from({length: 23}, (_, i) => ({
-        id: i + 1,
-        name: 'Aws Aqhash',
-        title: 'Frontend Engineer',
-        experience: '1 Year',
-        status: 'Hired',
-        location: 'Remote'
-    }));
+    setFilteredEngineers(filteredEngineersMemo)
+       
+
+    },[fetchedEngineers,filteredEngineersMemo])
+
+useEffect(()=>{
+    setTotalPages(Math.ceil(filteredEngineers.length / itemsPerPage))
+    setStartIndex((currentPage - 1) * itemsPerPage)
+    setCurrentEngineers(filteredEngineers.slice(startIndex, startIndex + itemsPerPage))
+},[filteredEngineers])
     
     const itemsPerPage = 5;
     
-    // Memoized filtered results
-    const filteredEngineers = useMemo(() => {
-        return mockEngineers.filter(engineer => {
-            const matchesSearch = engineer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                engineer.title.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesExperience = !filters.experience || engineer.experience === filters.experience;
-            const matchesStatus = !filters.status || engineer.status === filters.status;
-            const matchesLocation = !filters.location || engineer.location === filters.location;
-            
-            return matchesSearch && matchesExperience && matchesStatus && matchesLocation;
-        });
-    }, [searchTerm, filters, mockEngineers]);
     
-    const totalPages = Math.ceil(filteredEngineers.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentEngineers = filteredEngineers.slice(startIndex, startIndex + itemsPerPage);
+
     
     const handleFilterChange = (filterType, value) => {
         setFilters(prev => ({
@@ -57,6 +109,7 @@ const FindEng = () => {
     
     const handleSearch = (e) => {
         e.preventDefault();
+     
         // Search functionality is handled by the useMemo above
     };
     
@@ -66,6 +119,7 @@ const FindEng = () => {
                 onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} 
                 sidebarOpen={sidebarOpen}
             />
+            <Notification title={notification.message} actions={notification.actions} showNotification={notification.show} type={notification.type}/>
            
             <div className='find-page-content'>
                 <Sidebar  
@@ -90,9 +144,9 @@ const FindEng = () => {
                                     onChange={(e) => handleFilterChange('experience', e.target.value)}
                                 >
                                     <option value=''>All Experience</option>
-                                    <option value='1 Year'>1 Year</option>
-                                    <option value='2 Years'>2 Years</option>
-                                    <option value='3+ Years'>3+ Years</option>
+                                    <option value='Junior'>Junior</option>
+                                    <option value='Mid-level'>Mid-level</option>
+                                    <option value='Senior'>Senior</option>
                                 </select>
 
                                 <select 
@@ -104,16 +158,23 @@ const FindEng = () => {
                                     <option value='Hired'>Hired</option>
                                     <option value='Intern'>Intern</option>
                                     <option value='Contractor'>Contractor</option>
+                                    <option value='On Leave'>On Leave</option>
                                 </select>
 
                                 <select 
                                     value={filters.location}
                                     onChange={(e) => handleFilterChange('location', e.target.value)}
                                 >
-                                    <option value=''>All Locations</option>
-                                    <option value='Remote'>Remote</option>
-                                    <option value='On-site'>On-site</option>
-                                    <option value='Hybrid'>Hybrid</option>
+                                    <option value=''>Role</option>
+                                    <option value='Frontend Engineer'>Frontend Engineer</option>
+                                    <option value='Backend Engineer'>Backend Engineer</option>
+                                    <option value='Full Stack Engineer'>Full Stack Engineer</option>
+                                    <option value='DevOps Engineer'>DevOps Engineer</option>
+                                    <option value='Mobile Engineer'>Mobile Engineer</option>
+                                    <option value='Data Engineer'>Data Engineer</option>
+                                    <option value="QA Engineer">QA Engineer</option>
+                                    <option value="AI Architect">AI Architect</option>
+                                                        
                                 </select>
                             </div>
                             
@@ -134,7 +195,7 @@ const FindEng = () => {
                             </div>
                             
                             <div className='results-body'>
-                                {currentEngineers.length > 0 ? (
+                                {currentEngineers&&currentEngineers.length > 0 ? (
                                     currentEngineers.map((engineer) => (
                                         <div className='results-row' key={engineer.id}>
                                             <div className='col name'>
@@ -142,14 +203,14 @@ const FindEng = () => {
                                                     <PersonIcon/>
                                                 </div>
                                                 <div>
-                                                    <div className='user-name' onClick={() => navigate(`/profile`)}>{engineer.name}</div>
-                                                    <div className='user-extra'>{engineer.title}</div>
+                                                    <div className='user-name' onClick={() => navigate(`/profile/${engineer._id}`)}>{engineer.name}</div>
+                                                    <div className='user-extra'>{engineer.role}</div>
                                                 </div>
                                             </div>
                                             <div className='col experience'>{engineer.experience}</div>
                                             <div className={`col status ${engineer.status}`}>  {engineer.status}</div>
                                             <div className='col actions'>
-                                                <ArrowForwardIosTwoToneIcon onClick={() => navigate(`/profile`)}/>
+                                                <ArrowForwardIosTwoToneIcon onClick={() =>{   navigate(`/profile/${engineer._id}`)}}/>
                                             </div>
                                         </div>
                                     ))

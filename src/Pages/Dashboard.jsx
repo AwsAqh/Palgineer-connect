@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Header from '../Componetns/header';
 import Footer from '../Componetns/footer';
 import Sidebar from '../Componetns/sideBar';
@@ -19,6 +19,10 @@ const Dashboard = () => {
     const [user,setUser] = useState(JSON.parse(localStorage.getItem("user")))
     const [token,setToken] = useState(JSON.parse(localStorage.getItem("token")))
     const lastPath = useLocation().pathname.split('/').pop();
+    const {id} = useParams()
+    const [noEngineerFound,setNoEngineerFound] = useState(false)
+    const [engineerById,setEngineerById] = useState(null)
+    const [errorGetEngineerById,setErrorGetEngineerById] = useState({})
     const [avatar,setAvatar] = useState(null);
     const [avatarFormData,setAvatarFormData] = useState(user.avatar)
     const [skills,setSkills] = useState(user.skills);
@@ -57,7 +61,10 @@ const Dashboard = () => {
     const [editLinksUrlsState, setEditLinksUrlsState] = useState([]);
 
     const IsMounted=useRef(false)
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState(
+        ()=>{
+            if(lastPath==='dashboard'){
+                return {
         avatar: user.avatar,
         fullName: user.name,
         email: user.email,
@@ -68,7 +75,38 @@ const Dashboard = () => {
         skills: user.skills,
         links: user.links || {}, // Keep as object
         resume: user.resume
-    });
+                }
+            }
+        }
+    );
+
+
+    //Fetch engineer by id
+    useEffect(()=>{
+        const fetchEngineer=async()=>{
+        
+            console.log("fetching engineer by id",id)
+            try{
+                const response=await fetch(`http://localhost:7050/api/crud/${id}`,{method:"GET"})
+                const data=await response.json()
+                if(!response.ok){
+                    setNoEngineerFound(true)
+                }
+                else{
+                    setNoEngineerFound(false)
+                    setEngineerById(data)
+                }
+            }
+            catch(err){
+                setNoEngineerFound(true)
+                setErrorGetEngineerById(err)
+            }
+            
+        }
+        
+            id&&fetchEngineer()
+        
+    },[id])
 
     // Fixed: Better useEffect for managing links arrays,initial links effect
     useEffect(() => {
@@ -100,12 +138,14 @@ const Dashboard = () => {
 
     //secure page with token validation
     useEffect(()=>{
+        if(lastPath==='dashboard'){
         const now=new Date()
         const tokenExpiry=new Date(token.expiresIn)
         if (now>tokenExpiry) {
           localStorage.removeItem("token")
           navigate("/login")
         }
+    }
     },[])
 
 
@@ -121,10 +161,16 @@ const Dashboard = () => {
 
     //set avatar to user.avatar , for submitted avatar, it will be updated in the formData and in the UI
     useEffect(()=>{
+        if(lastPath==='dashboard'){
         setAvatar(user.avatar)
+    }
     },[user.avatar])
 
-    useEffect(()=>{setResumeState(user.resume); },[user.resume])
+    useEffect(()=>{
+        if(lastPath==='dashboard'){
+        setResumeState(user.resume); 
+    }
+    },[user.resume])
     
     //submit changes to the server , call handleSubmitChanges
     useEffect(()=>{
@@ -403,16 +449,21 @@ const Dashboard = () => {
 
            {lastPath==='dashboard' && <Notification title= {notification.message} actions= {notification.actions} showNotification={notification.show} type={notification.type}/>}
             <div className='dashboard-page-content'>
-
-                <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
                 
+                <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
+                {noEngineerFound ? <div>Engineer not found</div> :(
                 <div className='dash-user-info'>
+                  
                     <div className='basic-info dashboard-card'>
 
                         <div className='dash-user-info-avatar'>
                             <div>
-                             { avatar? <img src={ avatarIsChanged ? avatar:`http://localhost:7050${avatar}`   }  />: <PersonIcon />}
+                             { lastPath==='dashboard'? ( avatar   ? <img src={ avatarIsChanged ? avatar:`http://localhost:7050${avatar}`   }  />: <PersonIcon />) 
+                             : (engineerById&&engineerById.avatar ? <img src={`http://localhost:7050${engineerById.avatar}`}  />: <PersonIcon />)
+                             }
                             </div>
+
+
                            {lastPath==='dashboard' && <button className="edit-icon">
                                 <label htmlFor='edit-avatar'><EditTwoToneIcon /></label>
                                 <input ref={avatarRef} onTouchCancel={()=>{setAvatarIsChanged(false)}}  onChange={handleAvatarChange} type='file' id='edit-avatar' style={{display: 'none'}} />
@@ -424,65 +475,65 @@ const Dashboard = () => {
                             <div className='basic-info-form-area-row'>
                                     <div>
                                     <label htmlFor='full-name'>Full Name</label>
-                                    <input value={fullNameState} disabled={lastPath!=='dashboard'} onChange={(e)=>{setFullNameState(e.target.value)}} type='text' name='full-name' className="form-control" placeholder='Full Name'/>
+                                    <input value={lastPath==='dashboard' ? fullNameState : engineerById&&engineerById.name} disabled={lastPath!=='dashboard'} onChange={(e)=>{setFullNameState(e.target.value)}} type='text' name='full-name' className="form-control" placeholder='Full Name'/>
                                     </div>
 
                                     <div>
                                     <label htmlFor='email'>Email</label>
-                                    <input value={emailState} disabled={lastPath!=='dashboard'} onChange={(e)=>{setEmailState(e.target.value)}} type='text' name='email' className="form-control" placeholder='john.doe@example.com' />
+                                    <input value={lastPath==='dashboard' ? emailState : engineerById&&engineerById.email} disabled={lastPath!=='dashboard'} onChange={(e)=>{setEmailState(e.target.value)}} type='text' name='email' className="form-control" placeholder='john.doe@example.com' />
                                      </div>
                             </div>
 
                             <div className='basic-info-form-area-row'>
                             <div  >
                                 <label htmlFor='experience'>Experience</label>
-                                    <select value={experienceState} disabled={lastPath!=='dashboard'}
+                                    <select value={lastPath==='dashboard' ? experienceState : engineerById&&engineerById.experience} disabled={lastPath!=='dashboard'}
                                      onChange={(e)=>{
                                        
                                         setExperienceState(e.target.value)
                                         console.log(e.target.value)
                                         }} 
                                         className='form-control' name='experience'>
-                                        <option value='Beginner'>Beginner</option>
-                                        <option value='Intermediate'>Intermediate</option>
-                                        <option value='Advanced'>Advanced</option>
-                                        <option value='Expert'>Expert</option>
+                                        
+                                        <option value='Junior'>Junior</option>
+                                        <option value='Mid-level'>Mid-level</option>
                                         <option value='Senior'>Senior</option>
                                     </select>
                                     </div>
                                     <div>
                                 <label htmlFor='status'>Status</label>
-                                    <select value={statusState} disabled={lastPath!=='dashboard'} onChange={(e)=>{
+                                    <select value={lastPath==='dashboard' ? statusState : engineerById&&engineerById.status} disabled={lastPath!=='dashboard'} onChange={(e)=>{
                                       
                                         setStatusState(e.target.value)}} className='form-control' name='status'>
                                         <option value='Available'>Available</option>
                                         <option value='Hired'>Hired</option>
                                         <option value='On Leave'>On Leave</option>
                                         <option value='Intern'>Intern</option>
-                                        <option value='Senior'>Senior</option>
+                                        <option value='Contractor'>Contractor</option>
+                                        
                                     </select>
                                     </div>
                                     <div >
                                     <label htmlFor='role'>Role</label>
-                                    <select value={roleState} disabled={lastPath!=='dashboard'} onChange={(e)=>{
+                                    <select value={lastPath==='dashboard' ? roleState : engineerById&&engineerById.role} disabled={lastPath!=='dashboard'} onChange={(e)=>{
                                         setRoleState(e.target.value)
                                         
                                         }} className='form-control' name='role'>
-                                        <option value='Frontend Engineer'>Frontend Engineer</option>
-                                        <option value='Backend Engineer'>Backend Engineer</option>
-                                        <option value='Full Stack Engineer'>Full Stack Engineer</option>
-                                        <option value='DevOps Engineer'>DevOps Engineer</option>
-                                        <option value='QA Engineer'>QA Engineer</option>
-                                        <option value='Designer'>Designer</option>
-                                        <option value='Data Engineer'>Data Engineer</option>
-                                        <option value='Mobile Engineer'>Mobile Engineer</option>
+                                            <option value='Frontend Engineer'>Frontend Engineer</option>
+                                            <option value='Backend Engineer'>Backend Engineer</option>
+                                            <option value='Full Stack Engineer'>Full Stack Engineer</option>
+                                            <option value='DevOps Engineer'>DevOps Engineer</option>
+                                            <option value='Mobile Engineer'>Mobile Engineer</option>
+                                            <option value='Data Engineer'>Data Engineer</option>
+                                            <option value="QA Engineer">QA Engineer</option>
+                                            <option value="AI Architect">AI Architect</option>
                                     </select>
 
                                     </div>
                             </div>
                         <div style={{width:'30%', display:'flex',justifyContent:'space-between'}}>
 
-                           <button  className={( formData.avatar!==avatarFormData  ||
+                          {lastPath==='dashboard' && <button  className={( formData.avatar!==avatarFormData  ||
                            formData.fullName!==fullNameState ||
                             formData.email!==emailState ||
                              formData.experience!==experienceState ||
@@ -496,7 +547,7 @@ const Dashboard = () => {
                            setExperienceState(formData.experience);
                            setStatusState(formData.status);
                            setRoleState(formData.role);
-                           setAvatarIsChanged(false) ;setAvatar(formData.avatar)}} >Discard changes</button> 
+                           setAvatarIsChanged(false) ;setAvatar(formData.avatar)}} >Discard changes</button> }
                          
 
 
@@ -526,26 +577,31 @@ const Dashboard = () => {
                                 disabled={lastPath!=='dashboard'} 
                                 type='text' 
                                 name='summary' 
-                                value={summaryState}
+                                value={lastPath==='dashboard' ? summaryState : engineerById&&engineerById.summary}
                                 placeholder='Write a summary about yourself'  
                                 onChange={(e)=>{setSummaryState(e.target.value)}}
                             />
-                            <div><button className={formData.summary===summaryState ? 'hidden' : ''} onClick={()=>{
+
+                           { lastPath==='dashboard' && <div><button className={formData.summary===summaryState ? 'hidden' : ''} onClick={()=>{
                                 setFormData({...formData,summary:summaryState})
                                 
-                                }}>Save</button></div>
+                                }}>Save</button></div>}
                         </div>
 
                         <div className='tech-stack-area dashboard-card'>
                         Tech stack
                         <div className='tech-stack-container'>
                                 
-                                {skills.length >0?
+                                {lastPath==="dashboard"? ( skills.length >0?
                                     skills.map((skill,index)=>{
                                     return <div key={index}   onClick={()=>  {    lastPath==='dashboard' ?  handleRemoveSkill(skill) : null}}  className='skill'>{skill}</div>
-                                    }):
-                            <div style={{width:'100%', textAlign:'center'}}>No skills found</div>
-                            }
+                                    }):<div style={{width:'100%', textAlign:'center'}}>No skills found</div>)
+
+                                    : (engineerById&&engineerById.skills.length >0? engineerById.skills.map((skill,index)=>{
+                                        return <div key={index}   onClick={()=>  {    lastPath==='dashboard' ?  handleRemoveSkill(skill) : null}}  className='skill'>{skill}</div>
+                                    }):<div style={{width:'100%', textAlign:'center'}}>No skills found</div>)
+                            }   
+
                             { 
                             lastPath==='dashboard' && <input
                               id="add-skill-input"
@@ -569,53 +625,65 @@ const Dashboard = () => {
                             <div className='links-area dashboard-card'>
                                Links
                                <div className='links-items-container'>
-                               {linksArray && linksArray.length > 0 ? 
-        linksArray.map((link, index) => {
-            return (
-                <div key={index} className='link-item'>
-                    <div className='link-container'>
-                        <div className='link-item-logo'>
-                            <SocialIcon style={{width: 35, height: 35}} url={link.url} />
-                            <span>{link.name}</span>
-                        </div>
-                        <span>{link.url}</span>
-                        {lastPath === 'dashboard' && (
-                            <div>
-                                <EditTwoToneIcon 
-                                    className='edit-icon' 
-                                    onClick={() => handleOpenEditLinkForm(index)}
-                                />
-                                <DeleteTwoToneIcon 
-                                    onClick={() => handleRemoveLink(link)}
-                                />
-                            </div>
-                        )}
-                    </div>
+                               { lastPath==='dashboard' ? (linksArray && linksArray.length > 0 ? 
+                                    linksArray.map((link, index) => {
+                                        return (
+                                            <div key={index} className='link-item'>
+                                                <div className='link-container'>
+                                                    <div className='link-item-logo'>
+                                                        <SocialIcon style={{width: 35, height: 35}} url={link.url} />
+                                                        <span>{link.name}</span>
+                                                    </div>
+                                                    <span>{link.url}</span>
+                                                    {lastPath === 'dashboard' && (
+                                                        <div>
+                                                            <EditTwoToneIcon 
+                                                                className='edit-icon' 
+                                                                onClick={() => handleOpenEditLinkForm(index)}
+                                                            />
+                                                            <DeleteTwoToneIcon 
+                                                                onClick={() => handleRemoveLink(link)}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
 
-                    <div id='edit-link-form' className={editLinkFormAppeared[index] ? 'add-link-form' : 'hidden'}>
-                        <input 
-                            className='edit-link-form-input'
-                            type='text' 
-                            placeholder={link.name}
-                            value={editLinksNamesState[index] || ''}
-                            onChange={(e) => handleNameChange(index, e.target.value)}
-                        />
-                        {lastPath === 'dashboard' && (
-                            <input 
-                                className='edit-link-form-input'
-                                style={{width: '100%'}} 
-                                type='text' 
-                                placeholder={link.url}
-                                onChange={(e) => handleUrlChange(index, e.target.value)}
-                                value={editLinksUrlsState[index] || ''}
-                            />
-                        )}
-                        <CheckTwoToneIcon onClick={() => handleSubmitEditLink(index)} />
-                    </div>
-                </div>
-            );
-        }) : 
-        <div>No links found</div>
+                                                <div id='edit-link-form' className={editLinkFormAppeared[index] ? 'add-link-form' : 'hidden'}>
+                                                    <input 
+                                                        className='edit-link-form-input'
+                                                        type='text' 
+                                                        placeholder={link.name}
+                                                        value={editLinksNamesState[index] || ''}
+                                                        onChange={(e) => handleNameChange(index, e.target.value)}
+                                                    />
+                                                    {lastPath === 'dashboard' && (
+                                                        <input 
+                                                            className='edit-link-form-input'
+                                                            style={{width: '100%'}} 
+                                                            type='text' 
+                                                            placeholder={link.url}
+                                                            onChange={(e) => handleUrlChange(index, e.target.value)}
+                                                            value={editLinksUrlsState[index] || ''}
+                                                        />
+                                                    )}
+                                                    <CheckTwoToneIcon onClick={() => handleSubmitEditLink(index)} />
+                                                </div>
+                                            </div>
+                                        );
+                                    }) : 
+                                    <div>No links found</div>)
+                                    :
+                                    (engineerById&&engineerById.links && Object.keys(engineerById.links).length > 0 ? Object.keys(engineerById.links).map((link,index)=>{
+                                        return <div key={index} className='link-item'>
+                                            <div className='link-container'>
+                                                <div className='link-item-logo'>
+                                                    <SocialIcon style={{width: 35, height: 35}} url={engineerById.links[link]} />
+                                                    <span>{link}</span> 
+                                                </div>
+                                                <span>{engineerById.links[link]}</span>
+                                            </div>
+                                        </div>
+                                    }) : <div>No links found</div>)
                            }
                            {lastPath==='dashboard' && <div id='add-link-form' className={addLinkFormAppeared ? 'add-link-form' : 'hidden'}>
                             <input 
@@ -641,15 +709,22 @@ const Dashboard = () => {
                                 handleShowSubmitNotification()
                                 }}/>}
                             <img src={pdfImage} alt='upload resume' />
-                            {resumeStateName && <div><a onClick={()=>{
-                                console.log(resumeState)
+                            {lastPath==='dashboard' ? ( resumeStateName && <div><a onClick={()=>{
+                                
                                 window.open(`http://localhost:7050${resumeState}`, '_blank');
-                            }} href={`http://localhost:7050${resumeState}`} target='_blank' rel='noreferrer'>{resumeStateName}</a></div>}
+                            }} href={`http://localhost:7050${resumeState}`} target='_blank' rel='noreferrer'>{resumeStateName}</a></div>)
+                            :
+                            (engineerById&&engineerById.resume && <div><a onClick={()=>{
+                                window.open(`http://localhost:7050${engineerById.resume}`, '_blank');
+                            }} href={`http://localhost:7050${engineerById.resume}`} target='_blank' rel='noreferrer'>{engineerById.resume.split('/').pop()}</a></div>  )}
+
+
                             {lastPath==='dashboard' ? <label htmlFor='resume-upload'>Change Resume</label> : <div>Resume Name</div>}
                             <div> Accepted files: pdf, doc, docx </div>
                         </div>
                    </div>
                 </div>
+                )}
                
             </div>
         </div>

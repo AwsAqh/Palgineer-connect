@@ -3,7 +3,10 @@ import "../Styles/navbar.css"
 import PersonIcon from '@mui/icons-material/Person';
 import DashboardTwoToneIcon from '@mui/icons-material/DashboardTwoTone';
 import TravelExploreTwoToneIcon from '@mui/icons-material/TravelExploreTwoTone';
+import { useLocation, useNavigate } from 'react-router-dom';
 const sideBar = ({sidebarOpen, setSidebarOpen}) => {
+        const navigate=useNavigate()
+    const endPoint=useLocation().pathname.split('/').pop()
   return (
     <>
     <div className={`dash-side-nav-bar${sidebarOpen ? ' open' : ''}`}>
@@ -17,19 +20,19 @@ const sideBar = ({sidebarOpen, setSidebarOpen}) => {
     </button>
     <div className='side-nav-bar-options-fixed'>
         <div className='dash-side-nav-bar-list'>
-            <ul>
-                <li>
+            <ul >
+                <li className={endPoint==='dashboard' ? 'active' : ''}>
                     <DashboardTwoToneIcon/>
-                    <span>Dashboard</span>
+                    <span onClick={()=>{navigate('/dashboard')}}>Dashboard</span>
                 </li>
-                <li>
+                <li className={endPoint==='find-engineer' ? 'active' : ''}>
                     <TravelExploreTwoToneIcon/>
-                    <span>Find Engineer</span>
+                    <span onClick={()=>{navigate('/find')}}>Find Engineer</span>
                 </li>
             </ul>
         </div>
         <div id='logout_div'>
-            Logout
+            <span onClick={()=>{localStorage.removeItem('token');localStorage.removeItem('user');navigate('/login')}}>Logout</span>
         </div>
     </div>
 </div>

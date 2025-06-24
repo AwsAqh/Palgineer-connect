@@ -195,7 +195,7 @@ const handleSubmit = async(e) => {
                   <option value='Mobile Engineer'>Mobile Engineer</option>
                   <option value='Data Engineer'>Data Engineer</option>
                   <option value="QA Engineer">QA Engineer</option>
-                  <option value='Other'>Other</option>
+                  <option value="AI Architect">AI Architect</option>
                 </select>
               </div>
               <div className='form-group'>
@@ -206,9 +206,11 @@ const handleSubmit = async(e) => {
                 <label htmlFor='status'>Status</label>
                 <select id='status' name='status' onChange={handleChange} required>
                   <option value=''>Select status</option>
-                  <option value='available'>Available to Hire</option>
-                  <option value='hired'>Hired</option>
-                  <option value='not-looking'>Not Looking</option>
+                                         <option value='Available'>Available</option>
+                                        <option value='Hired'>Hired</option>
+                                        <option value='On Leave'>On Leave</option>
+                                        <option value='Intern'>Intern</option>
+                                        <option value='Contractor'>Contractor</option>
                 </select>
               </div>
               <div style={{ display: 'flex', width: '100%', gap: '1rem' }}>
