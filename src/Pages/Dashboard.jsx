@@ -512,6 +512,11 @@ const Dashboard = () => {
                                     <label htmlFor='email'>Email</label>
                                     <input value={lastPath==='dashboard' ? emailState : engineerById&&engineerById.email} disabled={lastPath!=='dashboard'} onChange={(e)=>{setEmailState(e.target.value)}} type='text' name='email' className="form-control" placeholder='john.doe@example.com' />
                                      </div>
+                                    {lastPath!=='dashboard' && <div>
+                                   <a  target="_self" 
+                                    rel="noopener" style={{color:"blue",textDecoration:"underline", fontSize:"12px", color:'rgb(100,100,100)' }} 
+                                    href={`mailto:${engineerById&&engineerById.email}`}>Send Email</a>
+                                       </div>}
                             </div>
 
                             <div className='basic-info-form-area-row'>

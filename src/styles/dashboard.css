@@ -136,7 +136,7 @@
 .basic-info-form-area-row{
     display: flex;
     justify-content: space-around;
-    align-items: center;
+    align-items: end;
     width: 70%;
     gap: 20px;
 

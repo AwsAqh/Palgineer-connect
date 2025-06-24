@@ -232,8 +232,10 @@ useEffect(()=>{
                                     currentEngineers.map((engineer) => (
                                         <div className='results-row' key={engineer.id}>
                                             <div className='col name'>
-                                                <div className='avatar'>
-                                                    <PersonIcon/>
+                                                <div className={engineer.avatar? "" : "avatar"}>
+
+                                                {engineer.avatar? <img style={{width:"60px",height:"60px",borderRadius:"50%"}} src={`http://localhost:7050${engineer.avatar}`} alt='avatar'/> : <PersonIcon/>}
+                                                
                                                 </div>
                                                 <div>
                                                     <div className='user-name' onClick={() =>{
