@@ -71,15 +71,19 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     padding: 1.5rem 2rem;
     margin: 2rem 0;
+ 
+    width: 100%;
+    max-width: 1200px;
+
+}
+
+.search-fields form{
     display: flex;
     flex-direction: row;
     gap: 1rem;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    max-width: 1200px;
-
-}
+    width: 100%;}
 
 .search-fields select, .search-fields button {
     font-size: 1rem;
@@ -189,6 +193,9 @@
 
 /* Responsive adjustments */
 @media (max-width: 900px) {
+    .search-fields form{
+        flex-direction: column;
+    }
     .field-cards {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
@@ -218,7 +225,9 @@
 
 
 
-    
+    .search-fields form{
+        flex-direction: column;
+    }
 
     .home-content {
         width: 80%;
@@ -239,6 +248,19 @@
         display: flex;
         flex-direction: column !important;
         align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+        padding: 1rem;
+        width: 100%;
+        max-width: 100vw;
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+        padding: 1rem;
+        box-shadow: none;
+        border-radius: 0;
+        background: none;
+        flex-wrap: wrap;
     }
 
     .home-content, .search-fields, .home-about, .fields-area{

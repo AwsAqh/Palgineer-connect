@@ -26,11 +26,11 @@ const sideBar = ({sidebarOpen, setSidebarOpen}) => {
                 <li className={endPoint==='home' ? 'active' : ''} onClick={()=>{navigate('/')}}> Home </li>
 
                 {user&&<li className={endPoint==='dashboard' ? 'active' : ''}>
-                    <DashboardTwoToneIcon/>
+                    
                     <span onClick={()=>{navigate('/dashboard')}}>Dashboard</span>
                 </li>}
                 <li className={endPoint==='find' ? 'active' : ''}>
-                    <TravelExploreTwoToneIcon/>
+                
                     <span onClick={()=>{navigate('/find')}}>Find Engineer</span>
                 </li>
             </ul>

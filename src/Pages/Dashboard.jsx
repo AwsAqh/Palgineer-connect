@@ -16,6 +16,7 @@ import Notification from '../Componetns/notification';
 import {SocialIcon} from 'react-social-icons';
 
 const Dashboard = () => {
+   
     const navigate=useNavigate()
     const [user,setUser] = useState(JSON.parse(localStorage.getItem("user")) || null)
     const [token,setToken] = useState(JSON.parse(localStorage.getItem("token")) || null)
@@ -744,6 +745,7 @@ const Dashboard = () => {
                                 handleShowSubmitNotification()
                                 }}/>}
                             <img src={pdfImage} alt='upload resume' />
+                            {lastPath!=='dashboard' && <div>Resume</div>}
                             {lastPath==='dashboard' ? ( resumeStateName && <div><a onClick={()=>{
                                 
                                 window.open(`http://localhost:7050${resumeState}`, '_blank');
@@ -753,9 +755,9 @@ const Dashboard = () => {
                                 window.open(`http://localhost:7050${engineerById.resume}`, '_blank');
                             }} href={`http://localhost:7050${engineerById.resume}`} target='_blank' rel='noreferrer'>{engineerById.resume.split('/').pop()}</a></div>  )}
 
-
-                            {lastPath==='dashboard' ? <label htmlFor='resume-upload'>Change Resume</label> : <div>Resume Name</div>}
-                            <div> Accepted files: pdf, doc, docx </div>
+                           
+                            {lastPath==='dashboard' && <label htmlFor='resume-upload'>Change Resume</label> }
+                            {lastPath==='dashboard' && <div> Accepted files: pdf, doc, docx </div>}
                         </div>
                    </div>
                 </div>

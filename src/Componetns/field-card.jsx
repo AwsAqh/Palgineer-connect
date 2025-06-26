@@ -1,14 +1,17 @@
 import React from 'react'
 import '../styles/field-card.css'
-const FieldCard = () => {
+import { useNavigate } from 'react-router-dom'
+const FieldCard = ({field,description,e}) => {
+  const navigate = useNavigate()
   return (
-    <div className='card-container'>
-        <div className='card-title'>UI/UX Design</div>
+    <div className='card-container' onClick={()=>{navigate('/find',{state:{filters:{
+  
+      role:e
+    }}})}}>
+        <div className='card-title'>{field}</div>
         <div className='card-content'>
-            Hire a UI/UX Designer for your 
-            project to build a better user experience.
-             Join our community of designers and get your project done.
-              and see the best designs in the world. 
+            {description}
+            
         </div>
     </div>
   )

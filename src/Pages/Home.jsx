@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../Componetns/header'
 import banner from '../assets/team-work.jpg'
@@ -7,7 +7,33 @@ import '../styles/homePage.css'
 import FieldCard from '../Componetns/field-card'
 import Footer from '../Componetns/footer'
 const HomePage = () => {
+
+  const  fieldsDescription = {
+    'Frontend Engineer': 'Frontend Engineer with a passion for building user-friendly interfaces',
+    'Backend Engineer': 'Backend Engineer with a passion for building scalable and efficient APIs',
+    'Full Stack Engineer': 'Full Stack Engineer with a passion for building scalable and efficient APIs and user-friendly interfaces',
+    'DevOps Engineer': 'DevOps Engineer with many experience in automation and deployment',
+    'QA Engineer': 'QA Engineer for testing the software and ensuring the quality of the software',
+    'AI Architect': 'AI Architect with a passion for building scalable and efficient AI applications',
+    'Mobile Engineer': 'Mobile Engineer with a passion for building mobile applications',
+    'Data Engineer': 'Data Engineer for building scalable and efficient data pipelines',
+  }
   const navigate = useNavigate()
+
+  const [filters,setFilters] = useState({
+    experience:'',
+    status:'',
+    role:''
+  })
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    navigate('/find',{state:{filters:{
+      experience:e.target.experience.value,
+      status:e.target.status.value,
+      role:e.target.role.value
+    }}})
+  }
   return (
     <div className='register-page-container'> 
         <Header />
@@ -21,25 +47,43 @@ const HomePage = () => {
             </div>
          </div>
          <div className='search-fields'>
-            <select className='form-select'>
-                <option value=''>Select a category</option>
+            <form onSubmit={handleSearch}> 
+            <select name='experience' className='form-select'>
+            <option value=''>All Experience</option>
+                                    <option value='Junior'>Junior</option>
+                                    <option value='Mid-level'>Mid-level</option>
+                                    <option value='Senior'>Senior</option>
             </select>
-            <select className='form-select'>
-                <option value=''>Select a category</option>
+            <select name='status' className='form-select'>
+            <option value=''>All Status</option>
+                                    <option value='Available'>Available</option>
+                                    <option value='Hired'>Hired</option>
+                                    <option value='Intern'>Intern</option>
+                                    <option value='Contractor'>Contractor</option>
+                                    <option value='On Leave'>On Leave</option>
             </select>
-            <select className='form-select'>
-                <option value=''>Select a category</option>
+            <select name='role' className='form-select'>
+            <option value=''>All Roles</option>
+                                    <option value='Frontend Engineer'>Frontend Engineer</option>
+                                    <option value='Backend Engineer'>Backend Engineer</option>
+                                    <option value='Full Stack Engineer'>Full Stack Engineer</option>
+                                    <option value='DevOps Engineer'>DevOps Engineer</option>
+                                    <option value='Mobile Engineer'>Mobile Engineer</option>
+                                    <option value='Data Engineer'>Data Engineer</option>
+                                    <option value="QA Engineer">QA Engineer</option>
+                                    <option value="AI Architect">AI Architect</option>
             </select>
-            <button className='btn btn-primary'>Search</button>
+            <button type='submit' className='btn btn-primary'>Search</button>
+            </form>
          </div>
          <div className='fields-area' > 
                         Hire A
          <div className='field-cards'>
         
-            <FieldCard />
-            <FieldCard />
-            <FieldCard />
-            <FieldCard />
+          {Object.keys(fieldsDescription).map((field,index)=>(
+            <FieldCard e={field} key={index} field={field} description={fieldsDescription[field]} />
+          ))}
+          
          </div>
          </div>
          <div className='home-about'>

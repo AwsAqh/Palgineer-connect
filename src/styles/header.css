@@ -45,6 +45,18 @@
     flex-shrink: 0;
 }
 
+.user-auth button {
+    background-color: #1E3A8A;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.user-auth button:hover {
+    background-color: #f59e0b;
+}
+
 
 @media (max-width: 900px) {
     .header-container {
@@ -65,8 +77,19 @@
 }
 
 @media (max-width: 600px) {
-    .user-auth button {
+    .header-menu {
+        width: 00%;
         display: none;
+    }
+    /* .user-auth {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    } */
+    .user-auth button {
+        padding: 6px 12px;
+        font-size: 12px;
     }
 
     .header-container {
@@ -95,7 +118,9 @@
     .user-auth-item-btn {
         width: 100%;
         text-align: center;
-    }           }      
+    }           }   
+    
+    
     
     
 

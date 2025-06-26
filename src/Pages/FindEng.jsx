@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import "../Styles/find_eng.css"
 import Header from '../Componetns/header'
 import Sidebar from '../Componetns/sideBar'
@@ -8,6 +8,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import ArrowForwardIosTwoToneIcon from '@mui/icons-material/ArrowForwardIosTwoTone';
 import Notification from '../Componetns/notification'
 const FindEng = () => {
+
+    const homeFilters = useLocation().state?.filters
     const navigate = useNavigate()
     const [notification,setNotification]=useState({
         message:"",
@@ -28,9 +30,9 @@ const FindEng = () => {
     const [startIndex,setStartIndex]=useState( null)
     const [currentEngineers,setCurrentEngineers]=useState( null)
     const [filters, setFilters] = useState({
-        experience: '',
-        status: '',
-        role: '',
+        experience: homeFilters?.experience || '',
+        status: homeFilters?.status || '',
+        role: homeFilters?.role || '',
         skills:[]
     });
 
@@ -173,7 +175,7 @@ useEffect(()=>{
                             
                             <div className='search-area-form-selects'>
                                 <select 
-                                    value={filters.experience}
+                                    value={ homeFilters?.experience || filters.experience}
                                     onChange={(e) => handleFilterChange('experience', e.target.value)}
                                 >
                                     <option value=''>All Experience</option>
@@ -183,7 +185,7 @@ useEffect(()=>{
                                 </select>
 
                                 <select 
-                                    value={filters.status}
+                                    value={ homeFilters?.status || filters.status}
                                     onChange={(e) => handleFilterChange('status', e.target.value)}
                                 >
                                     <option value=''>All Status</option>
@@ -195,7 +197,7 @@ useEffect(()=>{
                                 </select>
 
                                 <select 
-                                    value={filters.role}
+                                    value={ homeFilters?.role || filters.role}
                                         onChange={(e) => handleFilterChange('role', e.target.value)}
                                     >
                                     <option value=''>All Roles</option>
