@@ -21,7 +21,7 @@ Palgineer is a modern platform designed to help tech companies in Palestine disc
 *Landing page showcasing the platform's mission and features*
 
 ### Engineer Dashboard
-![Dashboard](./screenshots/dashboard.png)
+![Dashboard](./screenshots/dashboard2.png)
 *Personal dashboard where engineers can manage their profile, skills, and availability*
 
 
