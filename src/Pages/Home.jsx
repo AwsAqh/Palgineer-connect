@@ -42,7 +42,7 @@ const HomePage = () => {
             <img src={banner} alt='banner' />
             <div className='banner-content'>
                 <h1>Welcome to Palgineer</h1>
-                <p>The best place to learn and grow</p> 
+                <p>the best place to find your ideal software engineer</p> 
                 <button className='btn btn-primary' onClick={() => navigate('/find')}>Get Started</button>
             </div>
          </div>

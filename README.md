@@ -14,6 +14,29 @@ Palgineer is a modern platform designed to help tech companies in Palestine disc
 - Sidebar navigation with persistent layout
 - Avatar/profile picture upload
 
+## Screenshots
+
+### Homepage
+![Homepage](./screenshots/home.png)
+*Landing page showcasing the platform's mission and features*
+
+### Engineer Dashboard
+![Dashboard](./screenshots/dashboard.png)
+*Personal dashboard where engineers can manage their profile, skills, and availability*
+
+### Engineer Profile View
+![Profile](./screenshots/visit_profile.png)
+*Public profile view showing engineer's skills, experience, and contact information*
+
+### Find Engineers Page
+![Find Engineers](./screenshots/find.png)
+*Search and filter interface for companies to discover talented engineers*
+
+### Registration Page
+![Registration](./screenshots/signup.png)
+*User registration form with comprehensive profile setup*
+
+
 ## Tech Stack
 - **Frontend:** React, CSS (custom, no framework), Material UI Icons
 - **State Management:** React Hooks
