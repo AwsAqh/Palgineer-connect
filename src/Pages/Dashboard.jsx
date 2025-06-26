@@ -112,7 +112,7 @@ const Dashboard = () => {
     useEffect(()=>{
         const fetchEngineer=async()=>{
         
-            console.log("fetching engineer by id",id)
+            
             try{
                 const response=await fetch(`http://localhost:7050/api/crud/${id}`,{method:"GET"})
                 const data=await response.json()
@@ -247,7 +247,7 @@ const Dashboard = () => {
        
         
         try {
-            console.log("user id in submit:",user._id)
+           
             const response = await fetch(`http://localhost:7050/api/crud/${user._id}`, {
                 method: "PUT",
                 headers: {
@@ -267,7 +267,7 @@ const Dashboard = () => {
                 });
                 throw new Error("Failed to submit changes");
             }
-            console.log("new avatar in submit:",data.updated.avatar)
+           
             // Update local storage with new data
             const updatedUser = {
                 ...user,
@@ -383,8 +383,8 @@ const Dashboard = () => {
     const handleRemoveSkill=(skill)=>{
         const newSkills=skills.filter(s=>s!==skill) 
         setSkills(newSkills)
-        handleShowSubmitNotification()
-        console.log("show called")
+        
+       
     }
 
     // Fixed: Better handling of adding links
@@ -462,13 +462,7 @@ const Dashboard = () => {
         setEditLinkFormAppeared(Array(linksArray.length).fill(false));
     };
 
-    // Add this missing function
-    const handleShowSubmitNotification = () => {
-        // This function seems to be called but not defined in your original code
-        // You might want to implement the logic here or remove the calls to it
-        console.log("Submit notification should be shown");
-    };
-
+    
    
 
     return (
@@ -649,7 +643,7 @@ const Dashboard = () => {
                                 if(e.key==='Enter'&& e.target.value){
                                    
                                     setSkills([...skills,e.target.value])
-                                   handleShowSubmitNotification()
+                              
                                     e.target.value=''
                                 }
                               }}
@@ -742,7 +736,7 @@ const Dashboard = () => {
                                 
                                 setResumeState(e.target.files[0])
                                 setResumeStateName(e.target.files[0].name)
-                                handleShowSubmitNotification()
+                               
                                 }}/>}
                             <img src={pdfImage} alt='upload resume' />
                             {lastPath!=='dashboard' && <div>Resume</div>}
