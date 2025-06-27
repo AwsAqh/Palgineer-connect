@@ -15,7 +15,7 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    skills: '',
+    skills: [],
     experience: '',
     summary: '',
     role: '',
@@ -80,14 +80,17 @@ const handleSubmit = async(e) => {
     formDataToSend.append('password', formData.password);
     formDataToSend.append('summary', formData.summary);
     formData.skills.forEach(skill=> formDataToSend.append('skills',skill))
-    formDataToSend.append('experience', formData.experience);
+    if(formData.experience>2 && formData.experience<4){formDataToSend.append('experience',"Mid-Level")}
+    else
+    if(formData.experience>=4){formDataToSend.append('experience',"Senior")}
+    else{formDataToSend.append('experience',"Junior")}
     formDataToSend.append('status', formData.status);
     formDataToSend.append('role', formData.role);
     formDataToSend.append('avatar', formData.avatar);
     formDataToSend.append('resume', formData.resume);
     
     try{
-    const response= await fetch("http://localhost:7050/api/auth/register",{
+    const response= await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`,{
         method:"POST",
         body:formDataToSend
     })

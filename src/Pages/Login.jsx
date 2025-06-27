@@ -16,7 +16,7 @@ const LoginPage = () => {
         
             try
             {
-            const response=await fetch("http://localhost:7050/api/auth/login",{ headers: { "Content-Type": "application/json" },
+            const response=await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`,{ headers: { "Content-Type": "application/json" },
              method: "POST", body: JSON.stringify({ email: emailRef.current.value, password: passwordRef.current.value }) })
 
              const data=await response.json();
