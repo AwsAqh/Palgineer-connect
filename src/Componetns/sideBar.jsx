@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import "../Styles/navbar.css"
+import "../styles/navbar.css"
 import PersonIcon from '@mui/icons-material/Person';
 import DashboardTwoToneIcon from '@mui/icons-material/DashboardTwoTone';
 import TravelExploreTwoToneIcon from '@mui/icons-material/TravelExploreTwoTone';
