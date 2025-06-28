@@ -13,9 +13,9 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard key="dashboard" />} />
         <Route path="/find" element={<FindEng />} />
-        <Route path="/profile/:id" element={<Dashboard />} />
+        <Route path="/profile/:id" element={<Dashboard key="profile" />} />
       </Routes>
     </Router>
    

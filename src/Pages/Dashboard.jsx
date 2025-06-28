@@ -81,9 +81,10 @@ const Dashboard = () => {
         resume: user?.resume 
                 }
            }
-          
+         
         }
-    );
+    )
+
     
 
     useEffect(()=>{
@@ -148,16 +149,17 @@ const Dashboard = () => {
 
         // Convert object to array: { "LinkedIn": "https://...", "GitHub": "https://..." }
         // becomes [{ name: "LinkedIn", url: "https://..." }, { name: "GitHub", url: "https://..." }]
-        const linkPairs = Object.entries(links).map(([name, url]) => ({ name, url }));
+        const linkPairs = Object.entries(links)?.map(([name, url]) => ({ name, url }))|| [];
         
         setLinksArray(linkPairs);
         
         // Fixed: Ensure all arrays are properly synchronized
         const newEditFormAppeared = Array(linkPairs.length).fill(false);
-        const newEditNamesState = linkPairs.map(pair => pair.name);
-        const newEditUrlsState = linkPairs.map(pair => pair.url);
+        const newEditNamesState = linkPairs?.map(pair => pair.name);
+        const newEditUrlsState = linkPairs?.map(pair => pair.url);
         
         setEditLinkFormAppeared(newEditFormAppeared);
+
         setEditLinksNamesState(newEditNamesState);
         setEditLinksUrlsState(newEditUrlsState);
         
@@ -247,7 +249,7 @@ const Dashboard = () => {
         
         formDataToSubmit.append('resume', formData.resume);
         
-        // console.log("fprmData",formData.resume,"to send",formDataToSubmit.get('resume'))
+       
         
         try {
            
@@ -532,7 +534,7 @@ const Dashboard = () => {
                                      onChange={(e)=>{
                                        
                                         setExperienceState(e.target.value)
-                                        console.log(e.target.value)
+                                    
                                         }} 
                                         className='form-control' name='experience'>
                                         
@@ -574,11 +576,16 @@ const Dashboard = () => {
                             </div>
                         <div style={{width:'30%', display:'flex',justifyContent:'space-between'}}>
                                       
-                          {lastPath==='dashboard' && <button  className={( avatarIsChanged  ||
-                           formData.fullName!==fullNameState ||
-                            formData.email!==emailState ||
-                             formData.experience!==experienceState ||
-                              formData.status!==statusState ||
+                          
+                           
+                            {lastPath==='dashboard' &&  
+                              
+                          <button  className={(avatarIsChanged  ||
+                            formData?.fullName!==fullNameState  ||
+
+                            formData.email&&formData.email!==emailState ||
+                             formData.experience&&formData.experience!==experienceState ||
+                              formData.status&&formData.status!==statusState ||
                                formData.role!==roleState) ? 'btn btn btn-outline-primary btn-sm' : 'hidden'} 
                            
                            onClick={()=>  { if(avatarRef.current){avatarRef.current.value=''}; 
@@ -633,12 +640,12 @@ const Dashboard = () => {
                         Tech stack
                         <div className='tech-stack-container'>
                                 
-                                {lastPath==="dashboard"? ( skills&&skills.length >0?
-                                    skills.map((skill,index)=>{
+                                {lastPath==="dashboard"? ( skills&&skills?.length >0?
+                                    skills?.map((skill,index)=>{
                                     return <div key={index}   onClick={()=>  {    lastPath==='dashboard' ?  handleRemoveSkill(skill) : null}}  className='skill'>{skill}</div>
                                     }):<div style={{width:'100%', textAlign:'center'}}>No skills found</div>)
 
-                                    : (engineerById&&engineerById.skills.length >0? engineerById.skills.map((skill,index)=>{
+                                    : (engineerById&&engineerById.skills?.length >0? engineerById.skills.map((skill,index)=>{
                                         return <div key={index}   onClick={()=>  {    lastPath==='dashboard' ?  handleRemoveSkill(skill) : null}}  className='skill'>{skill}</div>
                                     }):<div style={{width:'100%', textAlign:'center'}}>No skills found</div>)
                             }   
