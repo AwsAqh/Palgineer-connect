@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import "../Styles/find_eng.css"
+import "../styles/find_eng.css"
 import Header from '../Componetns/header'
 import Sidebar from '../Componetns/sideBar'
 import Footer from '../Componetns/footer'
