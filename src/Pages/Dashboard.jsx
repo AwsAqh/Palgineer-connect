@@ -148,7 +148,7 @@ const Dashboard = () => {
 
         // Convert object to array: { "LinkedIn": "https://...", "GitHub": "https://..." }
         // becomes [{ name: "LinkedIn", url: "https://..." }, { name: "GitHub", url: "https://..." }]
-        const linkPairs = Object.entries(links)?.map(([name, url]) => ({ name, url }));
+        const linkPairs = links&&Object.entries(links)?.map(([name, url]) => ({ name, url }));
         
         setLinksArray(linkPairs);
         
