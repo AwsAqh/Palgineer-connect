@@ -4,10 +4,17 @@ import Header from '../Componetns/header';
 import Footer from '../Componetns/footer';
 import '../styles/homePage.css';
 import "../styles/register.css"
+import Notification from '../Componetns/Notification'
 
 import PersonIcon from '@mui/icons-material/Person';
 
 const Register = () => {
+  const [notification,setNotification]=useState({
+    message:"",
+    actions:[],
+    show:false,
+    type:""
+  })
   const navigate=useNavigate()
   const [step, setStep] = useState(1);
   const [avatarShown, setAvatarShown] = useState(null);
@@ -136,7 +143,7 @@ const handleSubmit = async(e) => {
   return (
     <div className='full-page-container'>
       <Header />
-
+      <Notification title= {notification.message} actions= {notification.actions} showNotification={notification.show} type={notification.type}/>
       <div className="register-flex-row">
         <div className="register-content">
           {step === 1 && (

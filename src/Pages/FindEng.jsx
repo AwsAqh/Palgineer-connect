@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import "../styles/find_eng.css"
+import "../Styles/find_eng.css"
 import Header from '../Componetns/header'
 import Sidebar from '../Componetns/sideBar'
 import Footer from '../Componetns/footer'
 import PersonIcon from '@mui/icons-material/Person';
 import ArrowForwardIosTwoToneIcon from '@mui/icons-material/ArrowForwardIosTwoTone';
-import Notification from '../Componetns/notification'
+import Notification from '../Componetns/Notification'
 const FindEng = () => {
 
     const homeFilters = useLocation().state?.filters

@@ -4,8 +4,15 @@ import "../styles/login.css"
 import banner from "../assets/Login-banner.jpg"
 import Header from '../Componetns/header'
 import Footer from '../Componetns/footer'
+import Notification from '../Componetns/Notification'
 const LoginPage = () => {
 
+    const [notification,setNotification]=useState({
+        message:"",
+        actions:[],
+        show:false,
+        type:""
+    })
     const navigate=useNavigate();
 
     const emailRef = useRef(null);
@@ -50,6 +57,7 @@ const LoginPage = () => {
   return (
     <div className='login-page-container'>
     <Header />
+    <Notification title= {notification.message} actions= {notification.actions} showNotification={notification.show} type={notification.type}/>
         <div className='login-container'>
 
             <div className='login-banner'>
