@@ -11,6 +11,7 @@ const Register = () => {
   const navigate=useNavigate()
   const [step, setStep] = useState(1);
   const [avatarShown, setAvatarShown] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -90,10 +91,18 @@ const handleSubmit = async(e) => {
     formDataToSend.append('resume', formData.resume);
     
     try{
+      setNotification({
+        message:"Registering...",
+        type:"blue-background"
+      })
     const response= await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`,{
         method:"POST",
         body:formDataToSend
     })
+    setNotification({
+      ...notification, shhow:false
+    })
+    
     const data=await response.json()
     if(response.ok){
        
@@ -106,6 +115,10 @@ const handleSubmit = async(e) => {
 
     else{
         const errorData=await response.json()
+        setNotification({
+          message:errorData.message,
+          type:"red-background"
+        })
         console.log(errorData)
     }
 

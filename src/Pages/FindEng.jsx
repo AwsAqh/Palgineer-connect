@@ -112,7 +112,7 @@ useEffect(()=>{
     setTotalPages(Math.ceil(filteredEngineers.length / itemsPerPage))
     setStartIndex((currentPage - 1) * itemsPerPage)
     setCurrentEngineers(filteredEngineers.slice(startIndex, startIndex + itemsPerPage))
-},[filteredEngineers])
+},[filteredEngineers,currentPage,startIndex])
     
     const itemsPerPage = 5;
     

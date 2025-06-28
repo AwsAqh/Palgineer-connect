@@ -16,9 +16,15 @@ const LoginPage = () => {
         
             try
             {
+                setNotification({
+                    message:"Logging in...",
+                    type:"blue-background"
+                })
             const response=await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`,{ headers: { "Content-Type": "application/json" },
              method: "POST", body: JSON.stringify({ email: emailRef.current.value, password: passwordRef.current.value }) })
-
+            setNotification({
+                ...notification, show:false
+            })
              const data=await response.json();
              if(response.ok){
              
@@ -28,7 +34,10 @@ const LoginPage = () => {
             navigate("/dashboard");         
              }
              else{
-                alert(data.message);
+                setNotification({
+                    message:data.message,
+                    type:"red-background"
+                })
              }
 
             }
