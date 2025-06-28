@@ -99,7 +99,8 @@ const handleSubmit = async(e) => {
     try{
       setNotification({
         message:"Registering...",
-        type:"blue-background"
+        type:"blue-background",
+        show:true
       })
     const response= await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`,{
         method:"POST",
@@ -123,7 +124,8 @@ const handleSubmit = async(e) => {
         const errorData=await response.json()
         setNotification({
           message:errorData.message,
-          type:"red-background"
+          type:"red-background",
+          show:true
         })
         console.log(errorData)
     }
@@ -131,7 +133,11 @@ const handleSubmit = async(e) => {
     }
     
     catch(error){
-        alert("Something went wrong")
+        setNotification({
+          message:"Something went wrong",
+          type:"red-background",
+          show:true
+        })
         console.log(error)
     }
 

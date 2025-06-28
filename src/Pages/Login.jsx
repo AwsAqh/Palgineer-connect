@@ -25,6 +25,7 @@ const LoginPage = () => {
             try
             {
                 setNotification({
+                    show:true,
                     message:"Logging in...",
                     type:"blue-background"
                 })
@@ -43,6 +44,7 @@ const LoginPage = () => {
              }
              else{
                 setNotification({
+                    show:true,
                     message:data.message,
                     type:"red-background"
                 })
@@ -52,6 +54,11 @@ const LoginPage = () => {
 
 
             catch(error){
+                setNotification({
+                    show:true,
+                    message:"Something went wrong",
+                    type:"red-background"
+                })
                 console.log(error);
             }
     }
