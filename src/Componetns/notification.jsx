@@ -9,7 +9,7 @@ const Notification = ({title,actions,showNotification,type}) => {
         <div>{title}</div>
       </div>
       <div className='notification-body flex-container'>
-        {actions.map((action,index)=> <button onClick={action.onClick} key={index}>{action.action}</button>  )} 
+        {actions?.map((action,index)=> <button onClick={action.onClick} key={index}>{action.action}</button>  )} 
 
       </div>
     </div>
