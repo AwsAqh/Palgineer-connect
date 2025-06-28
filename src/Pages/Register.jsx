@@ -5,7 +5,6 @@ import Footer from '../Componetns/footer';
 import '../styles/homePage.css';
 import "../styles/register.css"
 import Notification from '../Componetns/Notification'
-
 import PersonIcon from '@mui/icons-material/Person';
 
 const Register = () => {

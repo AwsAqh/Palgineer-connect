@@ -27,3 +27,4 @@ uploads/
 .vite/
 .env
 
+.vercel
