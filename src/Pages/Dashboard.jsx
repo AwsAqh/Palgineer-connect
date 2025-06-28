@@ -51,7 +51,7 @@ const Dashboard = () => {
         show:showNotification,
         actions:[]
     });
-
+    const resumeRef = useRef(null);
     const summaryRef = useRef(null);
     const [summaryState,setSummaryState] = useState(null);
     const linkNameRef = useRef(null);
@@ -77,7 +77,7 @@ const Dashboard = () => {
         role: user?.role ,
         summary: user?.summary ,
         skills: user?.skills ,
-        links: user?.links ,
+        links: user?.links ||{} ,
         resume: user?.resume 
                 }
            }
@@ -98,13 +98,14 @@ const Dashboard = () => {
         setSkills(user&&user.skills)
         setLinks(user&&user.links || {})
         setResumeState(user&&user.resume)
-        setResumeStateName(user&&user.resume.split('/').pop())
+        setResumeStateName(user&&user.resume?.split('/').pop())
         setFullNameState(user&&user.name)
         setEmailState(user&&user.email)
         setExperienceState(user&&user.experience)
         setStatusState(user&&user.status)
         setRoleState(user&&user.role)
         setSummaryState(user&&user.summary ||"")
+        
         }
     },[user])
 
@@ -114,7 +115,7 @@ const Dashboard = () => {
         
             
             try{
-                const response=await fetch(`http://localhost:7050/api/crud/${id}`,{method:"GET"})
+                const response=await fetch(`${import.meta.env.VITE_API_URL}/api/crud/${id}`,{method:"GET"})
                 const data=await response.json()
                 if(!response.ok){
                     setNoEngineerFound(true)
@@ -179,7 +180,7 @@ const Dashboard = () => {
     },[])
 
 
-    //set mounted to true
+    //set mounted to truex  
     useEffect(()=>{
         
         const timeOutId=setTimeout(()=>{IsMounted.current=true},0)
@@ -193,6 +194,7 @@ const Dashboard = () => {
     useEffect(()=>{
         if(lastPath==='dashboard'){
         setAvatar(user&&user.avatar)
+       
     }
     },[user&&user.avatar])
 
@@ -205,17 +207,18 @@ const Dashboard = () => {
     //submit changes to the server , call handleSubmitChanges
     useEffect(()=>{
         if(IsMounted.current){
+           
           handleSubmitChanges()
         }
     },[formData])
 
     const cancelChanges=()=>{
          setResumeState(formData.resume);
-      
+         resumeRef.current.value=''
         setLinks(formData.links); // Reset to object
         setSkills(formData.skills);
         setAvatar(formData.avatar);
-        setResumeStateName(formData.resume.split('/').pop());
+        setResumeStateName(formData.resume?.split('/').pop());
         setResumeState(formData.resume);
         setNotification({ ...notification, show: false });}
     
@@ -244,11 +247,11 @@ const Dashboard = () => {
         
         formDataToSubmit.append('resume', formData.resume);
         
-       
+        // console.log("fprmData",formData.resume,"to send",formDataToSubmit.get('resume'))
         
         try {
            
-            const response = await fetch(`http://localhost:7050/api/crud/${user._id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/crud/${user._id}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `Bearer ${token.token}`
@@ -257,7 +260,7 @@ const Dashboard = () => {
             });
             
             const data = await response.json(); // Parse JSON response
-            
+        
             if (!response.ok) {
                 setNotification({
                     message: data.message || "Failed to submit changes",
@@ -270,7 +273,7 @@ const Dashboard = () => {
            
             // Update local storage with new data
             const updatedUser = {
-                ...user,
+                _id: user._id,
                 avatar: data.updated.avatar,
                 name: data.updated.name,
                 email: data.updated.email,
@@ -280,12 +283,14 @@ const Dashboard = () => {
                 summary: data.updated.summary,
                 skills: data.updated.skills,
                 links: data.updated.links,
-                resume: data.updated.resume
+                resume: data.updated.resume,
+                resumeName: data.updated.resumeName
             };
             localStorage.setItem("user", JSON.stringify(updatedUser));
             setUser(updatedUser)
-            // localStorage.setItem("user", JSON.stringify(updatedUser));
-            // setUser(updatedUser);
+
+            
+            
             
             setNotification({
                 message: "Changes submitted successfully",
@@ -295,7 +300,7 @@ const Dashboard = () => {
             });
             setAvatarIsChanged(false)
         } catch (err) {
-            console.error("Error submitting changes:", err);
+           
             setNotification({
                 message: "Failed to submit changes",
                 type: "red-background",
@@ -310,6 +315,7 @@ const Dashboard = () => {
     
     //handle show submit notification after changes are made
     useEffect(() => {
+       
         if (IsMounted.current) {
             const hasChanges = JSON.stringify(formData.skills) !== JSON.stringify(skills) ||
                              JSON.stringify(formData.links) !== JSON.stringify(links) || // Compare objects
@@ -368,6 +374,11 @@ const Dashboard = () => {
             document.removeEventListener('click', handleClick);
         };
     }, [linksArray.length]); // Fixed: add dependency
+
+
+
+
+    
 
     const handleAvatarChange=(e)=>{
         setAvatarIsChanged(true)
@@ -483,8 +494,8 @@ const Dashboard = () => {
 
                         <div className='dash-user-info-avatar'>
                             <div>
-                             { lastPath==='dashboard'? ( avatar   ? <img src={ avatarIsChanged ? avatar:`http://localhost:7050${avatar}`   }  />: <PersonIcon />) 
-                             : (engineerById&&engineerById.avatar ? <img src={`http://localhost:7050${engineerById.avatar}`}  />: <PersonIcon />)
+                             { lastPath==='dashboard'? ( avatar   ? <img src={ avatarIsChanged ? avatar:`${avatar}`   }  />: <PersonIcon />) 
+                             : (engineerById&&engineerById.avatar ? <img src={`${engineerById.avatar}`}  />: <PersonIcon />)
                              }
                             </div>
 
@@ -562,8 +573,8 @@ const Dashboard = () => {
                                     </div>
                             </div>
                         <div style={{width:'30%', display:'flex',justifyContent:'space-between'}}>
-
-                          {lastPath==='dashboard' && <button  className={( formData.avatar!==avatarFormData  ||
+                                      
+                          {lastPath==='dashboard' && <button  className={( avatarIsChanged  ||
                            formData.fullName!==fullNameState ||
                             formData.email!==emailState ||
                              formData.experience!==experienceState ||
@@ -581,7 +592,7 @@ const Dashboard = () => {
                          
 
 
-                        {lastPath==='dashboard' && <button   className={( formData&&( formData.avatar!==avatarFormData  ||
+                        {lastPath==='dashboard' && <button   className={( formData&&( avatarIsChanged  ||
 
                         formData.fullName!==fullNameState ||
                          formData.email!==emailState ||
@@ -730,12 +741,13 @@ const Dashboard = () => {
                                </div>
 
                         <div className="resume-area dashboard-card">
-                            {lastPath==='dashboard' && <input id='resume-upload' name='resume-upload' type='file' accept='.pdf,.doc,.docx' 
-                            onTouchCancel={()=>{setResumeStateName(user.resume);setNotification({...notification,show:false})}}
+                            {lastPath==='dashboard' && <input ref={resumeRef} id='resume-upload' name='resume-upload' type='file' accept='.pdf,.doc,.docx' 
+                            onTouchCancel={()=>{setResumeStateName(user.resume);setNotification({...notification,show:false}); resumeRef.current.value=''}}
                              onChange={(e)=>{
                                 
                                 setResumeState(e.target.files[0])
                                 setResumeStateName(e.target.files[0].name)
+                                
                                
                                 }}/>}
                             <img src={pdfImage} alt='upload resume' />
@@ -743,11 +755,11 @@ const Dashboard = () => {
                             {lastPath==='dashboard' ? ( resumeStateName && <div><a onClick={()=>{
                                 
                                 window.open(`http://localhost:7050${resumeState}`, '_blank');
-                            }} href={`http://localhost:7050${resumeState}`} target='_blank' rel='noreferrer'>{resumeStateName}</a></div>)
+                            }} href={`${resumeState}`} target='_blank' rel='noreferrer'>{resumeStateName}</a></div>)
                             :
                             (engineerById&&engineerById.resume && <div><a onClick={()=>{
                                 window.open(`http://localhost:7050${engineerById.resume}`, '_blank');
-                            }} href={`http://localhost:7050${engineerById.resume}`} target='_blank' rel='noreferrer'>{engineerById.resume.split('/').pop()}</a></div>  )}
+                            }} href={`${engineerById.resume}`} target='_blank' rel='noreferrer'>{engineerById.resumeName?.split}</a></div>  )}
 
                            
                             {lastPath==='dashboard' && <label htmlFor='resume-upload'>Change Resume</label> }

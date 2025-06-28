@@ -4,18 +4,25 @@ import Header from '../Componetns/header';
 import Footer from '../Componetns/footer';
 import '../styles/homePage.css';
 import "../styles/register.css"
-
+import Notification from '../Componetns/notification';
 import PersonIcon from '@mui/icons-material/Person';
 
 const Register = () => {
+  const [notification,setNotification]=useState({
+    message:"",
+    actions:[],
+    show:false,
+    type:""
+  })
   const navigate=useNavigate()
   const [step, setStep] = useState(1);
   const [avatarShown, setAvatarShown] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    skills: '',
+    skills: [],
     experience: '',
     summary: '',
     role: '',
@@ -80,17 +87,28 @@ const handleSubmit = async(e) => {
     formDataToSend.append('password', formData.password);
     formDataToSend.append('summary', formData.summary);
     formData.skills.forEach(skill=> formDataToSend.append('skills',skill))
-    formDataToSend.append('experience', formData.experience);
+    if(formData.experience>2 && formData.experience<4){formDataToSend.append('experience',"Mid-Level")}
+    else
+    if(formData.experience>=4){formDataToSend.append('experience',"Senior")}
+    else{formDataToSend.append('experience',"Junior")}
     formDataToSend.append('status', formData.status);
     formDataToSend.append('role', formData.role);
     formDataToSend.append('avatar', formData.avatar);
     formDataToSend.append('resume', formData.resume);
     
     try{
-    const response= await fetch("http://localhost:7050/api/auth/register",{
+      setNotification({
+        message:"Registering...",
+        type:"blue-background"
+      })
+    const response= await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`,{
         method:"POST",
         body:formDataToSend
     })
+    setNotification({
+      ...notification, shhow:false
+    })
+    
     const data=await response.json()
     if(response.ok){
        
@@ -103,6 +121,10 @@ const handleSubmit = async(e) => {
 
     else{
         const errorData=await response.json()
+        setNotification({
+          message:errorData.message,
+          type:"red-background"
+        })
         console.log(errorData)
     }
 
@@ -120,7 +142,7 @@ const handleSubmit = async(e) => {
   return (
     <div className='full-page-container'>
       <Header />
-
+      <Notification title= {notification.message} actions= {notification.actions} showNotification={notification.show} type={notification.type}/>
       <div className="register-flex-row">
         <div className="register-content">
           {step === 1 && (

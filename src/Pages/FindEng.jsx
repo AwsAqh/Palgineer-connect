@@ -45,7 +45,7 @@ const FindEng = () => {
 
         const fetchAllEngineers=async()=>{
             try{
-                const response=await fetch("http://localhost:7050/api/crud",{method :"GET"})
+                const response=await fetch(`${import.meta.env.VITE_API_URL}/api/crud`,{method :"GET"})
                
                 const data=await response.json()
                 console.log("fetch :0",data)
@@ -112,7 +112,7 @@ useEffect(()=>{
     setTotalPages(Math.ceil(filteredEngineers.length / itemsPerPage))
     setStartIndex((currentPage - 1) * itemsPerPage)
     setCurrentEngineers(filteredEngineers.slice(startIndex, startIndex + itemsPerPage))
-},[filteredEngineers])
+},[filteredEngineers,currentPage,startIndex])
     
     const itemsPerPage = 5;
     
@@ -236,7 +236,7 @@ useEffect(()=>{
                                             <div className='col name'>
                                                 <div className={engineer.avatar? "" : "avatar"}>
 
-                                                {engineer.avatar? <img style={{width:"60px",height:"60px",borderRadius:"50%"}} src={`http://localhost:7050${engineer.avatar}`} alt='avatar'/> : <PersonIcon/>}
+                                                {engineer.avatar? <img style={{width:"60px",height:"60px",borderRadius:"50%"}} src={`${engineer.avatar}`} alt='avatar'/> : <PersonIcon/>}
                                                 
                                                 </div>
                                                 <div>

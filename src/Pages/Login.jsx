@@ -4,8 +4,16 @@ import "../styles/login.css"
 import banner from "../assets/Login-banner.jpg"
 import Header from '../Componetns/header'
 import Footer from '../Componetns/footer'
+import Notification from '../Componetns/notification';
+import { useState } from 'react';
 const LoginPage = () => {
 
+    const [notification,setNotification]=useState({
+        message:"",
+        actions:[],
+        show:false,
+        type:""
+    })
     const navigate=useNavigate();
 
     const emailRef = useRef(null);
@@ -16,9 +24,15 @@ const LoginPage = () => {
         
             try
             {
-            const response=await fetch("http://localhost:7050/api/auth/login",{ headers: { "Content-Type": "application/json" },
+                setNotification({
+                    message:"Logging in...",
+                    type:"blue-background"
+                })
+            const response=await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`,{ headers: { "Content-Type": "application/json" },
              method: "POST", body: JSON.stringify({ email: emailRef.current.value, password: passwordRef.current.value }) })
-
+            setNotification({
+                ...notification, show:false
+            })
              const data=await response.json();
              if(response.ok){
              
@@ -28,7 +42,10 @@ const LoginPage = () => {
             navigate("/dashboard");         
              }
              else{
-                alert(data.message);
+                setNotification({
+                    message:data.message,
+                    type:"red-background"
+                })
              }
 
             }
@@ -41,6 +58,7 @@ const LoginPage = () => {
   return (
     <div className='login-page-container'>
     <Header />
+    <Notification title= {notification.message} actions= {notification.actions} showNotification={notification.show} type={notification.type}/>
         <div className='login-container'>
 
             <div className='login-banner'>
