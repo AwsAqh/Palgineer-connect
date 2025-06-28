@@ -148,14 +148,14 @@ const Dashboard = () => {
 
         // Convert object to array: { "LinkedIn": "https://...", "GitHub": "https://..." }
         // becomes [{ name: "LinkedIn", url: "https://..." }, { name: "GitHub", url: "https://..." }]
-        const linkPairs = Object.entries(links).map(([name, url]) => ({ name, url }));
+        const linkPairs = Object.entries(links)?.map(([name, url]) => ({ name, url }));
         
         setLinksArray(linkPairs);
         
         // Fixed: Ensure all arrays are properly synchronized
         const newEditFormAppeared = Array(linkPairs.length).fill(false);
-        const newEditNamesState = linkPairs.map(pair => pair.name);
-        const newEditUrlsState = linkPairs.map(pair => pair.url);
+        const newEditNamesState = linkPairs?.map(pair => pair.name);
+        const newEditUrlsState = linkPairs?.map(pair => pair.url);
         
         setEditLinkFormAppeared(newEditFormAppeared);
         setEditLinksNamesState(newEditNamesState);
