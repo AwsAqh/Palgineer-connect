@@ -12,7 +12,7 @@ import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import ListTwoToneIcon from '@mui/icons-material/ListTwoTone';
 import '../styles/dashboard.css';
 import pdfImage from '../assets/pdf-image.png';
-import Notification from '../Componetns/notification';
+import Notification from '../Componetns/Notification';
 import {SocialIcon} from 'react-social-icons';
 
 const Dashboard = () => {

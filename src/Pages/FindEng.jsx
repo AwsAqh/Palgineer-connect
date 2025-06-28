@@ -6,7 +6,7 @@ import Sidebar from '../Componetns/sideBar'
 import Footer from '../Componetns/footer'
 import PersonIcon from '@mui/icons-material/Person';
 import ArrowForwardIosTwoToneIcon from '@mui/icons-material/ArrowForwardIosTwoTone';
-import Notification from '../Componetns/Notification'
+import Notification from '../Componetns/notification'
 const FindEng = () => {
 
     const homeFilters = useLocation().state?.filters
