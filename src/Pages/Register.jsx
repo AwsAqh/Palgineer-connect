@@ -4,7 +4,7 @@ import Header from '../Componetns/header';
 import Footer from '../Componetns/footer';
 import '../styles/homePage.css';
 import "../styles/register.css"
-import Notification from '../Componetns/Notification'
+import Notification from '../Componetns/notification';
 import PersonIcon from '@mui/icons-material/Person';
 
 const Register = () => {
