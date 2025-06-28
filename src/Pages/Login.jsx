@@ -4,7 +4,7 @@ import "../styles/login.css"
 import banner from "../assets/Login-banner.jpg"
 import Header from '../Componetns/header'
 import Footer from '../Componetns/footer'
-import Notification from '../Componetns/Notification';
+import Notification from '../Componetns/notification';
 import { useState } from 'react';
 const LoginPage = () => {
 
