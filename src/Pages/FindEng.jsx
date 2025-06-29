@@ -212,10 +212,15 @@ useEffect(()=>{
                                                         
                                 </select>
                             </div>
-                            
+
+                            <div style={{display:"flex",gap:"10px" }}>
                             <button type="submit" className="search-btn">
                                 Search ({filteredEngineers.length} results)
                             </button>
+                            <button className='search-btn' onClick={()=>{setFilters({...filters,experience:'',status:'',role:'',skills:[]}) , setSearchTerm('') }}>
+                            Clear filters
+                            </button>
+                            </div>
                         </form>
                     </section>
 

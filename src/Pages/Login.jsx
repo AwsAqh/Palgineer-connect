@@ -21,7 +21,15 @@ const LoginPage = () => {
 
     const handleLogin =async (e) => {
         e.preventDefault();
-        
+        if(emailRef.current.value==="" || passwordRef.current.value===""){
+            setNotification({
+                show:true,
+                message:"Please enter email and password",
+                type:"red-background"
+            })
+            setTimeout(()=>{setNotification({...notification,show:false})},4000)
+        }
+        else{
             try
             {
                 setNotification({
@@ -61,6 +69,7 @@ const LoginPage = () => {
                 })
                 console.log(error);
             }
+        }
     }
   return (
     <div className='login-page-container'>

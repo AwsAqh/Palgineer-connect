@@ -99,7 +99,7 @@ const Dashboard = () => {
         setSkills(user&&user.skills)
         setLinks(user&&user.links || {})
         setResumeState(user&&user.resume)
-        setResumeStateName(user&&user.resume?.split('/').pop())
+        setResumeStateName(user&&user.resumeName)
         setFullNameState(user&&user.name)
         setEmailState(user&&user.email)
         setExperienceState(user&&user.experience)
@@ -220,7 +220,7 @@ const Dashboard = () => {
         setLinks(formData.links); // Reset to object
         setSkills(formData.skills);
         setAvatar(formData.avatar);
-        setResumeStateName(formData.resume?.split('/').pop());
+        setResumeStateName(formData.resumeName);
         setResumeState(formData.resume);
         setNotification({ ...notification, show: false });}
     
@@ -250,9 +250,14 @@ const Dashboard = () => {
         formDataToSubmit.append('resume', formData.resume);
         
        
-        
+        console.log(formDataToSubmit.get('role')  ,formDataToSubmit.get('status') ,formDataToSubmit.get('experience'))
         try {
-           
+           setNotification({
+            message: "Submitting changes...",
+            type: "blue-background",
+            show: true,
+            actions: []
+           })
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/crud/${user._id}`, {
                 method: "PUT",
                 headers: {
@@ -260,7 +265,7 @@ const Dashboard = () => {
                 },
                 body: formDataToSubmit
             });
-            
+           setNotification({...notification,show:false})
             const data = await response.json(); // Parse JSON response
         
             if (!response.ok) {
@@ -300,6 +305,7 @@ const Dashboard = () => {
                 show: true,
                 actions: []
             });
+            setTimeout(()=>{setNotification({...notification,show:false})},4000)
             setAvatarIsChanged(false)
         } catch (err) {
            
@@ -522,7 +528,7 @@ const Dashboard = () => {
                                      </div>
                                     {lastPath!=='dashboard' && <div>
                                    <a  target="_self" 
-                                    rel="noopener" style={{color:"blue",textDecoration:"underline", fontSize:"12px", color:'rgb(100,100,100)' }} 
+                                    rel="noopener" style={{color:"white",textDecoration:"underline", fontSize:"12px" }} 
                                     href={`mailto:${engineerById&&engineerById.email}`}>Send Email</a>
                                        </div>}
                             </div>
@@ -749,7 +755,7 @@ const Dashboard = () => {
 
                         <div className="resume-area dashboard-card">
                             {lastPath==='dashboard' && <input ref={resumeRef} id='resume-upload' name='resume-upload' type='file' accept='.pdf,.doc,.docx' 
-                            onTouchCancel={()=>{setResumeStateName(user.resume);setNotification({...notification,show:false}); resumeRef.current.value=''}}
+                            onTouchCancel={()=>{setResumeStateName(user.resumeName);setNotification({...notification,show:false}); resumeRef.current.value=''}}
                              onChange={(e)=>{
                                 
                                 setResumeState(e.target.files[0])
@@ -759,14 +765,18 @@ const Dashboard = () => {
                                 }}/>}
                             <img src={pdfImage} alt='upload resume' />
                             {lastPath!=='dashboard' && <div>Resume</div>}
-                            {lastPath==='dashboard' ? ( resumeStateName && <div><a onClick={()=>{
+
+                            {
+                                lastPath==='dashboard' ? ( resumeStateName && <div><a onClick={()=>{
                                 
-                                window.open(`http://localhost:7050${resumeState}`, '_blank');
-                            }} href={`${resumeState}`} target='_blank' rel='noreferrer'>{resumeStateName}</a></div>)
+                                window.open(`${resumeState}`, '_blank');
+                            }} href={`${resumeState}`}  target='_blank' rel='noreferrer'>{resumeStateName}</a></div>)
                             :
                             (engineerById&&engineerById.resume && <div><a onClick={()=>{
-                                window.open(`http://localhost:7050${engineerById.resume}`, '_blank');
-                            }} href={`${engineerById.resume}`} target='_blank' rel='noreferrer'>{engineerById.resumeName?.split}</a></div>  )}
+                                window.open(`${engineerById.resume}`, '_blank');
+                            }} href={`${engineerById.resume}`}  target='_blank' rel='noreferrer'>{engineerById.resumeName}</a></div>  )
+
+                            }
 
                            
                             {lastPath==='dashboard' && <label htmlFor='resume-upload'>Change Resume</label> }
