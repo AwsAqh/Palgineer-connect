@@ -41,8 +41,43 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleContinue = (e) => {
+  const handleContinue = async (e) => {
     e.preventDefault();
+    if(step===1){
+
+      if(formData.password.length<=5){
+        setNotification({message:"Password should be 6 chars lenght", show:true, type:"red-background", actions:[] })
+      setTimeout(()=>{setNotification({...notification,show:false})},3000)
+      return;}
+
+      else{
+       
+      try{
+      setNotification({message:"Processing...", show:true, type:"blue-background", action:[]})
+      console.log(formData.email, typeof(formData.email))
+      const response=await fetch (`${import.meta.env.VITE_API_URL}/api/crud/check-email`,{method:"POST" ,headers:{"Content-Type":"application/json"}, body:JSON.stringify(formData.email)}) 
+
+      if(!response.ok){
+        console.log(await response.json())
+      setNotification({message:"Email already exists!", show:true, type:"red-background", action:[]})
+      setTimeout(()=>{setNotification({...notification,show:false})},3000)
+      return;
+      }
+      setNotification({...notification,show:false})
+      setStep(step+1)
+    }
+      
+
+      catch(err){
+        setNotification({message:"Something went wrong!", show:true, type:"red-background", action:[]})
+        setTimeout(()=>{setNotification({...notification,show:false})},3000)
+      }
+    }}
+     
+
+
+    else
+    
     setStep(step + 1);
   };
 
@@ -80,6 +115,9 @@ const handleAvatarChange = (e) => {
 
 const handleSubmit = async(e) => {
     e.preventDefault();
+
+
+
     console.log(formData)
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
@@ -151,6 +189,7 @@ const handleSubmit = async(e) => {
       <Notification title= {notification.message} actions= {notification.actions} showNotification={notification.show} type={notification.type}/>
       <div className="register-flex-row">
         <div className="register-content">
+
           {step === 1 && (
             <form className='register-form' onSubmit={handleContinue}>
               <div className='register-progress-bar-container'>
@@ -164,6 +203,7 @@ const handleSubmit = async(e) => {
                   ></div>
                 </div>
               </div>
+
               <div className='form-group'>
                 <label htmlFor='name'>Full Name</label>
                 <input type='text' id='name' name='name' value={formData.name} onChange={handleChange} placeholder='Enter your full name' required />
@@ -176,7 +216,7 @@ const handleSubmit = async(e) => {
                 <label htmlFor='password'>Password</label>
                 <input type='password' id='password' name='password' value={formData.password} onChange={handleChange} placeholder='Create a password' required />
               </div>
-              <button className='btn btn-primary register-btn' type='submit'>Continue</button>
+              <button className='btn btn-primary register-btn' type='submit'  >Continue</button>
             </form>
           )}
           {step === 2 && (

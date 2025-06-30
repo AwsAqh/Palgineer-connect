@@ -9,7 +9,7 @@ import ArrowForwardIosTwoToneIcon from '@mui/icons-material/ArrowForwardIosTwoTo
 import Notification from '../Componetns/notification'
 const FindEng = () => {
 
-    const homeFilters = useLocation().state?.filters
+    const [homeFilters,setHomeFilters] = useState(useLocation().state?.filters)
     const navigate = useNavigate()
     const [notification,setNotification]=useState({
         message:"",
@@ -217,7 +217,7 @@ useEffect(()=>{
                             <button type="submit" className="search-btn">
                                 Search ({filteredEngineers.length} results)
                             </button>
-                            <button className='search-btn' onClick={()=>{setFilters({...filters,experience:'',status:'',role:'',skills:[]}) , setSearchTerm('') }}>
+                            <button className='search-btn' onClick={()=>{setFilters({...filters,experience:'',status:'',role:'',skills:[]}) ; setSearchTerm('');setHomeFilters(''); console.log(filters,searchTerm) }}>
                             Clear filters
                             </button>
                             </div>
