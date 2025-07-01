@@ -5,6 +5,7 @@ import RegisterPage from './Pages/Register'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './Pages/Dashboard';
 import FindEng from './Pages/FindEng';
+import { Analytics } from "@vercel/analytics/next"
 function App() {
  
   return (
